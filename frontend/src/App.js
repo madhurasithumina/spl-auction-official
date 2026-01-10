@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login';
 import Home from './pages/Home';
 import PlayerRegistration from './pages/PlayerRegistration';
+import ViewPlayers from './pages/ViewPlayers';
 import './App.css';
 
 function App() {
@@ -30,6 +31,14 @@ function App() {
             element={
               <PrivateRoute>
                 <PlayerRegistration />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/view-players" 
+            element={
+              <PrivateRoute>
+                <ViewPlayers />
               </PrivateRoute>
             } 
           />

@@ -27,6 +27,7 @@ const Home = () => {
           </div>
           <nav className="nav-menu">
             <button className="nav-button" onClick={() => navigate('/')}>Home</button>
+            <button className="nav-button" onClick={() => navigate('/view-players')}>View Players</button>
             <button className="nav-button register-btn" onClick={handleRegisterPlayer}>
               Player Registration
             </button>
@@ -52,7 +53,7 @@ const Home = () => {
             <button className="primary-button" onClick={handleRegisterPlayer}>
               Register Player
             </button>
-            <button className="secondary-button" onClick={() => {}}>
+            <button className="secondary-button" onClick={() => navigate('/view-players')}>
               View Players
             </button>
           </div>
