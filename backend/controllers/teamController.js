@@ -55,7 +55,7 @@ const getTeamByName = async (req, res) => {
 // Auction a player to a team
 const auctionPlayer = async (req, res) => {
   try {
-    const { playerId, teamName, soldValue, soldStatus } = req.body;
+    const { playerId, teamName, soldValue, soldStatus, playerRole } = req.body;
 
     // Validate required fields
     if (!playerId || !soldStatus) {
@@ -75,44 +75,79 @@ const auctionPlayer = async (req, res) => {
 
     if (soldStatus === 'Sold') {
       // Validate team and sold value for sold players
-      if (!teamName || !soldValue) {
-        return res.status(400).json({ message: 'Team name and sold value are required for sold players' });
+      if (!teamName) {
+        return res.status(400).json({ message: 'Team name is required for sold players' });
       }
 
       // Find team
-      const team = await Team.findOne({ teamName });
+      const team = await Team.findOne({ teamName }).populate('players');
       if (!team) {
         return res.status(404).json({ message: 'Team not found' });
       }
 
-      // Check if team has enough budget
-      if (team.remainingBudget < soldValue) {
-        return res.status(400).json({ 
-          message: `Insufficient budget! ${teamName} has only LKR ${team.remainingBudget} remaining` 
-        });
+      // Check if player role is Captain or Manager (hold players with 0 value)
+      if (playerRole === 'Captain' || playerRole === 'Manager') {
+        // Validate only 2 hold players per team
+        const holdPlayers = team.players.filter(p => 
+          p.playerRole === 'Captain' || p.playerRole === 'Manager'
+        );
+
+        if (holdPlayers.length >= 2) {
+          return res.status(400).json({ 
+            message: `${teamName} already has 2 hold players (Captain and Manager)!` 
+          });
+        }
+
+        // Check if role already exists in team
+        const roleExists = team.players.some(p => p.playerRole === playerRole);
+        if (roleExists) {
+          return res.status(400).json({ 
+            message: `${teamName} already has a ${playerRole}!` 
+          });
+        }
+
+        // Hold players have 0 value, no budget deduction
+        player.soldValue = 0;
+        player.playerRole = playerRole;
+      } else {
+        // Regular player with sold value
+        if (soldValue === undefined || soldValue === null) {
+          return res.status(400).json({ message: 'Sold value is required for regular players' });
+        }
+
+        // Check if team has enough budget
+        if (team.remainingBudget < soldValue) {
+          return res.status(400).json({ 
+            message: `Insufficient budget! ${teamName} has only LKR ${team.remainingBudget} remaining` 
+          });
+        }
+
+        // Update team budget
+        team.remainingBudget -= soldValue;
+        player.soldValue = soldValue;
+        player.playerRole = 'Regular';
       }
 
-      // Update team budget and add player
-      team.remainingBudget -= soldValue;
+      // Add player to team
       team.players.push(player._id);
       await team.save();
 
       // Update player
       player.soldStatus = 'Sold';
-      player.soldValue = soldValue;
       player.soldTeam = teamName;
     } else {
       // Mark as unsold
       player.soldStatus = 'Unsold';
       player.soldValue = 0;
       player.soldTeam = '';
+      player.playerRole = '';
     }
 
     await player.save();
 
     res.status(200).json({
       message: soldStatus === 'Sold' 
-        ? `${player.playerName} sold to ${teamName} for LKR ${soldValue}!` 
+        ? `${player.playerName} sold to ${teamName} ${playerRole ? `as ${playerRole}` : ''} for LKR ${player.soldValue}!` 
         : `${player.playerName} marked as unsold`,
       player
     });

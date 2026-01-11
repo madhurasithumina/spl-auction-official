@@ -88,13 +88,14 @@ const Reports = () => {
       player.bowlingStyle,
       player.soldStatus || 'Available',
       player.soldTeam || '-',
+      player.playerRole && player.playerRole !== 'Regular' ? player.playerRole : '-',
       player.soldValue ? `LKR ${player.soldValue.toLocaleString()}` : '-'
     ]);
 
     // Add table
     doc.autoTable({
       startY: 45,
-      head: [['#', 'Player Name', 'Age', 'Batting', 'Bowling', 'Style', 'Status', 'Team', 'Value']],
+      head: [['#', 'Player Name', 'Age', 'Batting', 'Bowling', 'Style', 'Status', 'Team', 'Role', 'Value']],
       body: tableData,
       theme: 'grid',
       headStyles: {
@@ -109,7 +110,10 @@ const Reports = () => {
       alternateRowStyles: {
         fillColor: [245, 245, 245]
       },
-      margin: { top: 45 }
+      margin: { top: 45 },
+      columnStyles: {
+        8: { cellWidth: 20 } // Role column
+      }
     });
 
     // Add summary if team-wise report
@@ -155,6 +159,7 @@ const Reports = () => {
       'Bowling Style': player.bowlingStyle,
       'Status': player.soldStatus || 'Available',
       'Team': player.soldTeam || '-',
+      'Role': player.playerRole && player.playerRole !== 'Regular' ? player.playerRole : '-',
       'Sold Value (LKR)': player.soldValue || 0
     }));
 
@@ -171,6 +176,7 @@ const Reports = () => {
       { wch: 15 }, // Bowling Style
       { wch: 12 }, // Status
       { wch: 15 }, // Team
+      { wch: 12 }, // Role
       { wch: 15 }  // Sold Value
     ];
     worksheet['!cols'] = columnWidths;

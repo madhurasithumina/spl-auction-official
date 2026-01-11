@@ -41,6 +41,11 @@ const playerSchema = new mongoose.Schema({
     enum: ['Software', 'Marketing', 'Technical', 'Accounts', ''],
     default: ''
   },
+  playerRole: {
+    type: String,
+    enum: ['Captain', 'Manager', 'Regular', ''],
+    default: ''
+  },
   registeredAt: {
     type: Date,
     default: Date.now

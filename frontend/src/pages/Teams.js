@@ -185,6 +185,27 @@ const Teams = () => {
                     <div className="player-card-number" style={{ background: getTeamColor(selectedTeam.teamName).gradient }}>
                       #{index + 1}
                     </div>
+                    {player.playerRole && player.playerRole !== 'Regular' && (
+                      <div className="player-role-badge" style={{
+                        position: 'absolute',
+                        top: '10px',
+                        right: '10px',
+                        padding: '6px 12px',
+                        background: player.playerRole === 'Captain' 
+                          ? 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' 
+                          : 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+                        color: 'white',
+                        borderRadius: '20px',
+                        fontSize: '12px',
+                        fontWeight: '700',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
+                        zIndex: 10
+                      }}>
+                        {player.playerRole === 'Captain' ? '⭐ CAPTAIN' : '👔 MANAGER'}
+                      </div>
+                    )}
                     <div className="team-player-avatar" style={{ background: getAvatarColor(player.playerName) }}>
                       {getInitials(player.playerName)}
                     </div>
@@ -208,6 +229,11 @@ const Teams = () => {
 
                     <div className="team-player-value" style={{ background: getTeamColor(selectedTeam.teamName).gradient }}>
                       LKR {player.soldValue.toLocaleString()}
+                      {(player.playerRole === 'Captain' || player.playerRole === 'Manager') && (
+                        <span style={{fontSize: '11px', display: 'block', marginTop: '3px', opacity: 0.9}}>
+                          (Hold Player)
+                        </span>
+                      )}
                     </div>
                   </div>
                 ))}

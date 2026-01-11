@@ -12,6 +12,7 @@ const Auction = () => {
   const [soldValue, setSoldValue] = useState('');
   const [selectedTeam, setSelectedTeam] = useState('');
   const [soldStatus, setSoldStatus] = useState('Sold');
+  const [playerRole, setPlayerRole] = useState('Regular');
   const [loading, setLoading] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [auctionResult, setAuctionResult] = useState(null);
@@ -90,9 +91,26 @@ const Auction = () => {
       return;
     }
 
-    if (soldStatus === 'Sold' && (!selectedTeam || !soldValue)) {
-      alert('Please select team and enter sold value for sold players');
-      return;
+    if (soldStatus === 'Sold') {
+      if (!selectedTeam) {
+        alert('Please select a team');
+        return;
+      }
+      
+      // If role is Captain or Manager, sold value should be 0
+      if (playerRole === 'Captain' || playerRole === 'Manager') {
+        // Hold players have 0 value
+        if (soldValue && parseInt(soldValue) !== 0) {
+          alert(`${playerRole} is a hold player and must have 0 value`);
+          return;
+        }
+      } else {
+        // Regular players must have sold value
+        if (!soldValue || parseInt(soldValue) <= 0) {
+          alert('Please enter a valid sold value for regular players');
+          return;
+        }
+      }
     }
 
     setLoading(true);
@@ -101,15 +119,17 @@ const Auction = () => {
       const response = await axios.post('http://localhost:5000/api/teams/auction', {
         playerId: selectedPlayer._id,
         teamName: selectedTeam,
-        soldValue: parseInt(soldValue),
-        soldStatus
+        soldValue: (playerRole === 'Captain' || playerRole === 'Manager') ? 0 : parseInt(soldValue),
+        soldStatus,
+        playerRole: soldStatus === 'Sold' ? playerRole : ''
       });
 
       setAuctionResult({
         player: selectedPlayer,
         team: selectedTeam,
-        value: soldValue,
+        value: (playerRole === 'Captain' || playerRole === 'Manager') ? 0 : soldValue,
         status: soldStatus,
+        role: playerRole,
         message: response.data.message
       });
       
@@ -123,6 +143,7 @@ const Auction = () => {
         setSoldValue('');
         setSelectedTeam('');
         setSoldStatus('Sold');
+        setPlayerRole('Regular');
         fetchPlayers();
         fetchTeams();
       }, 3000);
@@ -273,6 +294,32 @@ const Auction = () => {
               {soldStatus === 'Sold' && (
                 <>
                   <div className="form-group">
+                    <label>Player Role</label>
+                    <select
+                      value={playerRole}
+                      onChange={(e) => {
+                        setPlayerRole(e.target.value);
+                        // Auto-set sold value to 0 for Captain/Manager
+                        if (e.target.value === 'Captain' || e.target.value === 'Manager') {
+                          setSoldValue('0');
+                        } else {
+                          setSoldValue('');
+                        }
+                      }}
+                      required
+                    >
+                      <option value="Regular">Regular Player</option>
+                      <option value="Captain">Captain (Hold Player - LKR 0)</option>
+                      <option value="Manager">Manager (Hold Player - LKR 0)</option>
+                    </select>
+                    {(playerRole === 'Captain' || playerRole === 'Manager') && (
+                      <small style={{color: '#43e97b', display: 'block', marginTop: '8px'}}>
+                        ℹ️ Hold players are sold at LKR 0 value (max 2 per team)
+                      </small>
+                    )}
+                  </div>
+
+                  <div className="form-group">
                     <label>Select Team</label>
                     <select
                       value={selectedTeam}
@@ -294,10 +341,16 @@ const Auction = () => {
                       type="number"
                       value={soldValue}
                       onChange={(e) => setSoldValue(e.target.value)}
-                      placeholder="Enter sold amount"
-                      min="1"
+                      placeholder={(playerRole === 'Captain' || playerRole === 'Manager') ? '0 (Hold Player)' : 'Enter sold amount'}
+                      min="0"
+                      disabled={playerRole === 'Captain' || playerRole === 'Manager'}
                       required
                     />
+                    {(playerRole === 'Captain' || playerRole === 'Manager') && (
+                      <small style={{color: '#ff0844', display: 'block', marginTop: '8px'}}>
+                        🔒 Hold players have fixed 0 value
+                      </small>
+                    )}
                   </div>
                 </>
               )}
@@ -329,8 +382,31 @@ const Auction = () => {
               <h3>{auctionResult.player.playerName}</h3>
               {auctionResult.status === 'Sold' && (
                 <>
+                  {auctionResult.role && auctionResult.role !== 'Regular' && (
+                    <div className="popup-role" style={{
+                      display: 'inline-block',
+                      padding: '6px 16px',
+                      background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+                      color: 'white',
+                      borderRadius: '20px',
+                      fontWeight: '700',
+                      fontSize: '14px',
+                      marginBottom: '10px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '1px'
+                    }}>
+                      {auctionResult.role === 'Captain' ? '⭐ CAPTAIN' : '👔 MANAGER'}
+                    </div>
+                  )}
                   <div className="popup-team">{auctionResult.team}</div>
-                  <div className="popup-value">LKR {parseInt(auctionResult.value).toLocaleString()}</div>
+                  <div className="popup-value">
+                    LKR {parseInt(auctionResult.value).toLocaleString()}
+                    {(auctionResult.role === 'Captain' || auctionResult.role === 'Manager') && (
+                      <span style={{fontSize: '14px', color: '#43e97b', marginLeft: '10px'}}>
+                        (Hold Player)
+                      </span>
+                    )}
+                  </div>
                 </>
               )}
               <p className="popup-message">{auctionResult.message}</p>
