@@ -68,7 +68,7 @@ const Login = () => {
         </form>
         
         <div className="login-footer">
-          <p>Demo Credentials: Sarasa / Sarasa@123</p>
+          <p>Developed by Sarasa Group Pvt Ltd</p>
         </div>
       </div>
     </div>
