@@ -642,13 +642,38 @@
 }
 
 /* Responsive */
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .auction-header .header-content {
+    max-width: 95%;
+  }
+
+  .teams-budget-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 1024px) {
   .auction-content {
     grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .search-panel, .auction-form-panel {
+    max-height: none;
   }
   
   .teams-budget-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .auction-header .nav-menu {
+    gap: 10px;
+  }
+
+  .auction-header .nav-button {
+    padding: 8px 12px;
+    font-size: 12px;
   }
 }
 
@@ -658,9 +683,20 @@
     gap: 15px;
   }
 
+  .auction-header .logo {
+    width: 100%;
+    justify-content: center;
+  }
+
   .auction-header .nav-menu {
     flex-direction: column;
     width: 100%;
+    gap: 8px;
+  }
+
+  .auction-header .nav-button {
+    width: 100%;
+    text-align: center;
   }
 
   .auction-header .user-info {
@@ -669,6 +705,8 @@
     border-left: none;
     width: 100%;
     justify-content: center;
+    padding-top: 10px;
+    border-top: 2px solid rgba(255, 255, 255, 0.3);
   }
 
   .page-title {
@@ -677,9 +715,62 @@
 
   .teams-budget-grid {
     grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .budget-card {
+    padding: 20px;
   }
 
   .status-buttons {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .popup-content {
+    width: 90%;
+    margin: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 26px;
+  }
+
+  .page-subtitle {
+    font-size: 14px;
+  }
+
+  .search-panel h2,
+  .auction-form-panel h2 {
+    font-size: 20px;
+  }
+
+  .player-item {
+    padding: 12px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 12px 15px;
+    font-size: 14px;
+  }
+
+  .submit-auction-btn {
+    padding: 14px;
+    font-size: 15px;
+  }
+
+  .budget-card h3 {
+    font-size: 16px;
+  }
+
+  .budget-amount {
+    font-size: 24px;
   }
 }

@@ -28,7 +28,7 @@ const PlayerRegistration = () => {
     setMessage({ type: '', text: '' });
 
     try {
-      await axios.post('http://localhost:5000/api/players', formData);
+      await axios.post('http://localhost:8081/backend/api/players.php', formData);
       
       setMessage({ 
         type: 'success', 

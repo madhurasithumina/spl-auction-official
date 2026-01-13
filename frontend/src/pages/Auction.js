@@ -25,7 +25,7 @@ const Auction = () => {
 
   const initializeTeams = async () => {
     try {
-      await axios.post('http://localhost:5000/api/teams/initialize');
+      await axios.post('http://localhost:8081/backend/api/teams/initialize.php');
     } catch (error) {
       console.error('Error initializing teams:', error);
     }
@@ -33,8 +33,8 @@ const Auction = () => {
 
   const fetchPlayers = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/players');
-      setPlayers(response.data.filter(p => p.soldStatus !== 'Sold'));
+      const response = await axios.get('http://localhost:8081/backend/api/players.php');
+      setPlayers(response.data.filter(p => p.sold_status !== 'Sold'));
     } catch (error) {
       console.error('Error fetching players:', error);
     }
@@ -42,7 +42,7 @@ const Auction = () => {
 
   const fetchTeams = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/teams');
+      const response = await axios.get('http://localhost:8081/backend/api/teams.php');
       setTeams(response.data);
     } catch (error) {
       console.error('Error fetching teams:', error);
@@ -75,12 +75,12 @@ const Auction = () => {
   };
 
   const filteredPlayers = players.filter(player =>
-    player.playerName.toLowerCase().includes(searchTerm.toLowerCase())
+    player.player_name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleSelectPlayer = (player) => {
     setSelectedPlayer(player);
-    setSearchTerm(player.playerName);
+    setSearchTerm(player.player_name);
   };
 
   const handleSubmit = async (e) => {
@@ -116,8 +116,8 @@ const Auction = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/teams/auction', {
-        playerId: selectedPlayer._id,
+      const response = await axios.post('http://localhost:8081/backend/api/teams/auction.php', {
+        playerId: selectedPlayer.id,
         teamName: selectedTeam,
         soldValue: (playerRole === 'Captain' || playerRole === 'Manager') ? 0 : parseInt(soldValue),
         soldStatus,
@@ -200,11 +200,11 @@ const Auction = () => {
       <div className="teams-budget-section">
         <div className="teams-budget-grid">
           {teams.map(team => (
-            <div key={team._id} className="budget-card" style={{ background: getTeamColor(team.teamName) }}>
-              <h3>{team.teamName}</h3>
-              <div className="budget-amount">LKR {team.remainingBudget.toLocaleString()}</div>
+            <div key={team.id} className="budget-card" style={{ background: getTeamColor(team.team_name) }}>
+              <h3>{team.team_name}</h3>
+              <div className="budget-amount">LKR {(Number(team.remaining_budget) || 0).toLocaleString()}</div>
               <div className="budget-label">Remaining Budget</div>
-              <div className="players-count">{team.players.length} Players</div>
+              <div className="players-count">{team.players?.length || 0} Players</div>
             </div>
           ))}
         </div>
@@ -236,17 +236,17 @@ const Auction = () => {
             ) : (
               filteredPlayers.map(player => (
                 <div
-                  key={player._id}
-                  className={`player-item ${selectedPlayer?._id === player._id ? 'selected' : ''}`}
+                  key={player.id}
+                  className={`player-item ${selectedPlayer?.id === player.id ? 'selected' : ''}`}
                   onClick={() => handleSelectPlayer(player)}
                 >
-                  <div className="player-item-avatar" style={{ background: getAvatarColor(player.playerName) }}>
-                    {getInitials(player.playerName)}
+                  <div className="player-item-avatar" style={{ background: getAvatarColor(player.player_name) }}>
+                    {getInitials(player.player_name)}
                   </div>
                   <div className="player-item-info">
-                    <div className="player-item-name">{player.playerName}</div>
+                    <div className="player-item-name">{player.player_name}</div>
                     <div className="player-item-details">
-                      {player.age} yrs | {player.battingSide} | {player.bowlingStyle}
+                      {player.age} yrs | {player.batting_side} | {player.bowling_style}
                     </div>
                   </div>
                 </div>
@@ -262,12 +262,12 @@ const Auction = () => {
           {selectedPlayer ? (
             <form onSubmit={handleSubmit} className="auction-form">
               <div className="selected-player-display">
-                <div className="selected-avatar" style={{ background: getAvatarColor(selectedPlayer.playerName) }}>
-                  {getInitials(selectedPlayer.playerName)}
+                <div className="selected-avatar" style={{ background: getAvatarColor(selectedPlayer.player_name) }}>
+                  {getInitials(selectedPlayer.player_name)}
                 </div>
                 <div className="selected-player-info">
-                  <h3>{selectedPlayer.playerName}</h3>
-                  <p>{selectedPlayer.age} years | {selectedPlayer.battingSide} | {selectedPlayer.bowlingStyle}</p>
+                  <h3>{selectedPlayer.player_name}</h3>
+                  <p>{selectedPlayer.age} years | {selectedPlayer.batting_side} | {selectedPlayer.bowling_style}</p>
                 </div>
               </div>
 
@@ -328,8 +328,8 @@ const Auction = () => {
                     >
                       <option value="">Choose a team</option>
                       {teams.map(team => (
-                        <option key={team._id} value={team.teamName}>
-                          {team.teamName} (LKR {team.remainingBudget.toLocaleString()} available)
+                        <option key={team.id} value={team.team_name}>
+                          {team.team_name} (LKR {(Number(team.remaining_budget) || 0).toLocaleString()} available)
                         </option>
                       ))}
                     </select>
@@ -376,10 +376,10 @@ const Auction = () => {
               <h2>{auctionResult.status === 'Sold' ? '🎉 SOLD!' : '✗ UNSOLD'}</h2>
             </div>
             <div className="popup-body">
-              <div className="popup-avatar" style={{ background: getAvatarColor(auctionResult.player.playerName) }}>
-                {getInitials(auctionResult.player.playerName)}
+              <div className="popup-avatar" style={{ background: getAvatarColor(auctionResult.player.player_name) }}>
+                {getInitials(auctionResult.player.player_name)}
               </div>
-              <h3>{auctionResult.player.playerName}</h3>
+              <h3>{auctionResult.player.player_name}</h3>
               {auctionResult.status === 'Sold' && (
                 <>
                   {auctionResult.role && auctionResult.role !== 'Regular' && (

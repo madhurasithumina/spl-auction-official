@@ -425,13 +425,27 @@
 }
 
 /* Responsive Design */
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .registration-content {
+    max-width: 95%;
+  }
+}
+
 @media (max-width: 1024px) {
   .registration-content {
     grid-template-columns: 1fr;
+    gap: 30px;
   }
 
   .info-panel {
     flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .info-card {
+    flex: 1;
+    min-width: 250px;
   }
 }
 
@@ -444,6 +458,13 @@
   .reg-header .nav-menu {
     flex-wrap: wrap;
     justify-content: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .reg-header .nav-button {
+    padding: 8px 14px;
+    font-size: 12px;
   }
 
   .reg-header .user-info {
@@ -466,13 +487,56 @@
 
   .radio-group {
     flex-direction: column;
+    gap: 12px;
   }
 
   .form-actions {
     flex-direction: column;
+    gap: 12px;
+  }
+
+  .form-actions button {
+    width: 100%;
   }
 
   .info-panel {
     flex-direction: column;
+  }
+
+  .info-card {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header h1 {
+    font-size: 28px;
+  }
+
+  .page-header p {
+    font-size: 14px;
+  }
+
+  .form-container {
+    padding: 25px 15px;
+  }
+
+  .form-header h2 {
+    font-size: 24px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 12px 15px;
+    font-size: 14px;
+  }
+
+  .submit-btn {
+    padding: 14px;
+    font-size: 15px;
   }
 }

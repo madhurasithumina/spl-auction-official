@@ -17,7 +17,7 @@ const ViewPlayers = () => {
 
   const fetchPlayers = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/players');
+      const response = await axios.get('http://localhost:8081/backend/api/players.php');
       setPlayers(response.data);
       setLoading(false);
     } catch (err) {
@@ -66,8 +66,8 @@ const ViewPlayers = () => {
   };
 
   const filteredPlayers = players.filter(player => {
-    const matchesSearch = player.playerName.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesBowling = filterBowling === 'All' || player.bowlingStyle === filterBowling;
+    const matchesSearch = player.player_name?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesBowling = filterBowling === 'All' || player.bowling_style === filterBowling;
     return matchesSearch && matchesBowling;
   });
 
@@ -188,37 +188,37 @@ const ViewPlayers = () => {
         ) : (
           <div className="players-grid">
             {filteredPlayers.map((player) => (
-              <div key={player._id} className="player-card">
+              <div key={player.id} className="player-card">
                 <div className="player-card-header">
-                  <div className="player-avatar" style={{ background: getAvatarColor(player.playerName) }}>
-                    {getInitials(player.playerName)}
+                  <div className="player-avatar" style={{ background: getAvatarColor(player.player_name) }}>
+                    {getInitials(player.player_name)}
                   </div>
-                  <div className="player-badge">{getBowlingIcon(player.bowlingStyle)}</div>
+                  <div className="player-badge">{getBowlingIcon(player.bowling_style)}</div>
                 </div>
                 <div className="player-card-body">
-                  <h3 className="player-name">{player.playerName}</h3>
+                  <h3 className="player-name">{player.player_name}</h3>
                   <div className="player-age">Age: {player.age}</div>
                   
                   <div className="player-details">
                     <div className="detail-row">
                       <span className="detail-label">🏏 Batting</span>
-                      <span className="detail-value batting-badge">{player.battingSide}</span>
+                      <span className="detail-value batting-badge">{player.batting_side}</span>
                     </div>
                     <div className="detail-row">
                       <span className="detail-label">⚾ Bowling</span>
-                      <span className="detail-value bowling-badge">{player.bowlingSide}</span>
+                      <span className="detail-value bowling-badge">{player.bowling_side}</span>
                     </div>
                     <div className="detail-row full-width">
                       <span className="detail-label">💨 Style</span>
                       <span className="detail-value style-badge">
-                        {getBowlingIcon(player.bowlingStyle)} {player.bowlingStyle}
+                        {getBowlingIcon(player.bowling_style)} {player.bowling_style}
                       </span>
                     </div>
                   </div>
                 </div>
                 <div className="player-card-footer">
                   <div className="registration-date">
-                    Registered: {new Date(player.registeredAt).toLocaleDateString()}
+                    Registered: {new Date(player.registered_at).toLocaleDateString()}
                   </div>
                 </div>
               </div>

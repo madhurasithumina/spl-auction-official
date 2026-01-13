@@ -21,8 +21,8 @@ const Reports = () => {
   const fetchData = async () => {
     try {
       const [playersRes, teamsRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/players'),
-        axios.get('http://localhost:5000/api/teams')
+        axios.get('http://localhost:8081/backend/api/players.php'),
+        axios.get('http://localhost:8081/backend/api/teams.php')
       ]);
       setPlayers(playersRes.data);
       setTeams(teamsRes.data);
@@ -43,13 +43,13 @@ const Reports = () => {
     if (reportType === 'all-players') {
       return players;
     } else if (reportType === 'sold-players') {
-      return players.filter(p => p.soldStatus === 'Sold');
+      return players.filter(p => p.sold_status === 'Sold');
     } else if (reportType === 'unsold-players') {
-      return players.filter(p => p.soldStatus === 'Unsold');
+      return players.filter(p => p.sold_status === 'Unsold');
     } else if (reportType === 'available-players') {
-      return players.filter(p => p.soldStatus === 'Available');
+      return players.filter(p => p.sold_status === 'Available');
     } else if (reportType === 'team-wise' && selectedTeam) {
-      const team = teams.find(t => t.teamName === selectedTeam);
+      const team = teams.find(t => t.team_name === selectedTeam);
       return team ? team.players : [];
     }
     return [];
@@ -81,15 +81,15 @@ const Reports = () => {
     // Prepare table data
     const tableData = filteredPlayers.map((player, index) => [
       index + 1,
-      player.playerName,
+      player.player_name,
       player.age,
-      player.battingSide,
-      player.bowlingSide,
-      player.bowlingStyle,
-      player.soldStatus || 'Available',
-      player.soldTeam || '-',
-      player.playerRole && player.playerRole !== 'Regular' ? player.playerRole : '-',
-      player.soldValue ? `LKR ${player.soldValue.toLocaleString()}` : '-'
+      player.batting_side,
+      player.bowling_side,
+      player.bowling_style,
+      player.sold_status || 'Available',
+      player.sold_team || '-',
+      player.player_role && player.player_role !== 'Regular' ? player.player_role : '-',
+      player.sold_value ? `LKR ${player.sold_value.toLocaleString()}` : '-'
     ]);
 
     // Add table
@@ -118,16 +118,17 @@ const Reports = () => {
 
     // Add summary if team-wise report
     if (reportType === 'team-wise' && selectedTeam) {
-      const team = teams.find(t => t.teamName === selectedTeam);
+      const team = teams.find(t => t.team_name === selectedTeam);
       if (team) {
         const finalY = doc.lastAutoTable.finalY + 10;
         doc.setFontSize(12);
         doc.setFont('helvetica', 'bold');
         doc.text('Team Summary:', 14, finalY);
         doc.setFont('helvetica', 'normal');
-        doc.text(`Total Players: ${team.players.length}`, 14, finalY + 7);
-        doc.text(`Total Spent: LKR ${(team.initialBudget - team.remainingBudget).toLocaleString()}`, 14, finalY + 14);
-        doc.text(`Remaining Budget: LKR ${team.remainingBudget.toLocaleString()}`, 14, finalY + 21);
+        doc.text(`Total Players: ${team.players?.length || 0}`, 14, finalY + 7);
+        const totalSpent = (Number(team.initial_budget) || 0) - (Number(team.remaining_budget) || 0);
+        doc.text(`Total Spent: LKR ${totalSpent.toLocaleString()}`, 14, finalY + 14);
+        doc.text(`Remaining Budget: LKR ${(Number(team.remaining_budget) || 0).toLocaleString()}`, 14, finalY + 21);
       }
     }
 
@@ -152,15 +153,15 @@ const Reports = () => {
     // Prepare data
     const excelData = filteredPlayers.map((player, index) => ({
       'No': index + 1,
-      'Player Name': player.playerName,
+      'Player Name': player.player_name,
       'Age': player.age,
-      'Batting Side': player.battingSide,
-      'Bowling Side': player.bowlingSide,
-      'Bowling Style': player.bowlingStyle,
-      'Status': player.soldStatus || 'Available',
-      'Team': player.soldTeam || '-',
-      'Role': player.playerRole && player.playerRole !== 'Regular' ? player.playerRole : '-',
-      'Sold Value (LKR)': player.soldValue || 0
+      'Batting Side': player.batting_side,
+      'Bowling Side': player.bowling_side,
+      'Bowling Style': player.bowling_style,
+      'Status': player.sold_status || 'Available',
+      'Team': player.sold_team || '-',
+      'Role': player.player_role && player.player_role !== 'Regular' ? player.player_role : '-',
+      'Sold Value (LKR)': player.sold_value || 0
     }));
 
     // Create worksheet
@@ -187,14 +188,15 @@ const Reports = () => {
 
     // Add team summary sheet if team-wise report
     if (reportType === 'team-wise' && selectedTeam) {
-      const team = teams.find(t => t.teamName === selectedTeam);
+      const team = teams.find(t => t.team_name === selectedTeam);
       if (team) {
+        const totalSpent = (Number(team.initial_budget) || 0) - (Number(team.remaining_budget) || 0);
         const summaryData = [
-          { 'Metric': 'Team Name', 'Value': team.teamName },
-          { 'Metric': 'Total Players', 'Value': team.players.length },
-          { 'Metric': 'Initial Budget', 'Value': `LKR ${team.initialBudget.toLocaleString()}` },
-          { 'Metric': 'Total Spent', 'Value': `LKR ${(team.initialBudget - team.remainingBudget).toLocaleString()}` },
-          { 'Metric': 'Remaining Budget', 'Value': `LKR ${team.remainingBudget.toLocaleString()}` }
+          { 'Metric': 'Team Name', 'Value': team.team_name },
+          { 'Metric': 'Total Players', 'Value': team.players?.length || 0 },
+          { 'Metric': 'Initial Budget', 'Value': `LKR ${(Number(team.initial_budget) || 0).toLocaleString()}` },
+          { 'Metric': 'Total Spent', 'Value': `LKR ${totalSpent.toLocaleString()}` },
+          { 'Metric': 'Remaining Budget', 'Value': `LKR ${(Number(team.remaining_budget) || 0).toLocaleString()}` }
         ];
         const summarySheet = XLSX.utils.json_to_sheet(summaryData);
         summarySheet['!cols'] = [{ wch: 20 }, { wch: 25 }];
@@ -212,14 +214,14 @@ const Reports = () => {
     const workbook = XLSX.utils.book_new();
 
     teams.forEach(team => {
-      const teamPlayers = team.players.map((player, index) => ({
+      const teamPlayers = (team.players || []).map((player, index) => ({
         'No': index + 1,
-        'Player Name': player.playerName,
+        'Player Name': player.player_name,
         'Age': player.age,
-        'Batting Side': player.battingSide,
-        'Bowling Side': player.bowlingSide,
-        'Bowling Style': player.bowlingStyle,
-        'Sold Value (LKR)': player.soldValue || 0
+        'Batting Side': player.batting_side,
+        'Bowling Side': player.bowling_side,
+        'Bowling Style': player.bowling_style,
+        'Sold Value (LKR)': player.sold_value || 0
       }));
 
       const worksheet = XLSX.utils.json_to_sheet(teamPlayers);
@@ -228,17 +230,20 @@ const Reports = () => {
         { wch: 12 }, { wch: 15 }, { wch: 15 }
       ];
       
-      XLSX.utils.book_append_sheet(workbook, worksheet, team.teamName);
+      XLSX.utils.book_append_sheet(workbook, worksheet, team.team_name);
     });
 
     // Add summary sheet
-    const summaryData = teams.map(team => ({
-      'Team': team.teamName,
-      'Players': team.players.length,
-      'Initial Budget': `LKR ${team.initialBudget.toLocaleString()}`,
-      'Total Spent': `LKR ${(team.initialBudget - team.remainingBudget).toLocaleString()}`,
-      'Remaining': `LKR ${team.remainingBudget.toLocaleString()}`
-    }));
+    const summaryData = teams.map(team => {
+      const totalSpent = (Number(team.initial_budget) || 0) - (Number(team.remaining_budget) || 0);
+      return {
+        'Team': team.team_name,
+        'Players': team.players?.length || 0,
+        'Initial Budget': `LKR ${(Number(team.initial_budget) || 0).toLocaleString()}`,
+        'Total Spent': `LKR ${totalSpent.toLocaleString()}`,
+        'Remaining': `LKR ${(Number(team.remaining_budget) || 0).toLocaleString()}`
+      };
+    });
     
     const summarySheet = XLSX.utils.json_to_sheet(summaryData);
     summarySheet['!cols'] = [{ wch: 15 }, { wch: 10 }, { wch: 15 }, { wch: 15 }, { wch: 15 }];
@@ -320,7 +325,7 @@ const Reports = () => {
                 >
                   <option value="">Choose a team</option>
                   {teams.map(team => (
-                    <option key={team._id} value={team.teamName}>{team.teamName}</option>
+                    <option key={team.id} value={team.team_name}>{team.team_name}</option>
                   ))}
                 </select>
               </div>
@@ -374,16 +379,16 @@ const Reports = () => {
             ) : (
               <div className="preview-list">
                 {getFilteredPlayers().slice(0, 5).map((player, index) => (
-                  <div key={player._id} className="preview-item">
+                  <div key={player.id} className="preview-item">
                     <span className="preview-number">{index + 1}</span>
-                    <span className="preview-name">{player.playerName}</span>
+                    <span className="preview-name">{player.player_name}</span>
                     <span className="preview-age">{player.age} yrs</span>
-                    {player.soldTeam && (
+                    {player.sold_team && (
                       <span 
                         className="preview-team" 
-                        style={{ background: getTeamColor(player.soldTeam) }}
+                        style={{ background: getTeamColor(player.sold_team) }}
                       >
-                        {player.soldTeam}
+                        {player.sold_team}
                       </span>
                     )}
                   </div>
@@ -404,27 +409,30 @@ const Reports = () => {
         <div className="teams-summary-container">
           <h2>📈 Teams Summary</h2>
           <div className="teams-summary-grid">
-            {teams.map(team => (
-              <div key={team._id} className="team-summary-card">
-                <div className="team-summary-header" style={{ background: getTeamColor(team.teamName) }}>
-                  <h3>{team.teamName}</h3>
+            {teams.map(team => {
+              const totalSpent = (Number(team.initial_budget) || 0) - (Number(team.remaining_budget) || 0);
+              return (
+                <div key={team.id} className="team-summary-card">
+                  <div className="team-summary-header" style={{ background: getTeamColor(team.team_name) }}>
+                    <h3>{team.team_name}</h3>
+                  </div>
+                  <div className="team-summary-body">
+                    <div className="summary-row">
+                      <span>Players:</span>
+                      <strong>{team.players?.length || 0}</strong>
+                    </div>
+                    <div className="summary-row">
+                      <span>Spent:</span>
+                      <strong>LKR {totalSpent.toLocaleString()}</strong>
+                    </div>
+                    <div className="summary-row">
+                      <span>Remaining:</span>
+                      <strong>LKR {(Number(team.remaining_budget) || 0).toLocaleString()}</strong>
+                    </div>
+                  </div>
                 </div>
-                <div className="team-summary-body">
-                  <div className="summary-row">
-                    <span>Players:</span>
-                    <strong>{team.players.length}</strong>
-                  </div>
-                  <div className="summary-row">
-                    <span>Spent:</span>
-                    <strong>LKR {(team.initialBudget - team.remainingBudget).toLocaleString()}</strong>
-                  </div>
-                  <div className="summary-row">
-                    <span>Remaining:</span>
-                    <strong>LKR {team.remainingBudget.toLocaleString()}</strong>
-                  </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

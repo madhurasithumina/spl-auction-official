@@ -388,15 +388,56 @@
 }
 
 /* Responsive */
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .admin-header .header-content {
+    max-width: 95%;
+  }
+
+  .admin-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .admin-header .nav-menu {
+    gap: 10px;
+  }
+
+  .admin-header .nav-button {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .admin-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .info-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
   .admin-header .header-content {
     flex-direction: column;
     gap: 15px;
   }
 
+  .admin-header .logo {
+    width: 100%;
+    justify-content: center;
+  }
+
   .admin-header .nav-menu {
     flex-direction: column;
     width: 100%;
+    gap: 8px;
+  }
+
+  .admin-header .nav-button {
+    width: 100%;
+    text-align: center;
   }
 
   .admin-header .user-info {
@@ -405,6 +446,8 @@
     border-left: none;
     width: 100%;
     justify-content: center;
+    padding-top: 10px;
+    border-top: 2px solid rgba(255, 255, 255, 0.3);
   }
 
   .page-title {
@@ -417,5 +460,36 @@
 
   .info-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 26px;
+  }
+
+  .page-subtitle {
+    font-size: 14px;
+  }
+
+  .admin-card h2 {
+    font-size: 20px;
+  }
+
+  .admin-card p {
+    font-size: 13px;
+  }
+
+  .action-btn {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+
+  .info-item span:first-child {
+    font-size: 13px;
+  }
+
+  .info-item strong {
+    font-size: 14px;
   }
 }

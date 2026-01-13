@@ -15,7 +15,7 @@ const Teams = () => {
 
   const fetchTeams = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/teams');
+      const response = await axios.get('http://localhost:8081/backend/api/teams.php');
       setTeams(response.data);
       if (response.data.length > 0) {
         setSelectedTeam(response.data[0]);
@@ -75,7 +75,9 @@ const Teams = () => {
   };
 
   const getTotalSpent = (team) => {
-    return team.initialBudget - team.remainingBudget;
+    const initial = Number(team.initial_budget) || 0;
+    const remaining = Number(team.remaining_budget) || 0;
+    return initial - remaining;
   };
 
   return (
@@ -114,16 +116,16 @@ const Teams = () => {
         <div className="teams-nav">
           {teams.map(team => (
             <button
-              key={team._id}
-              className={`team-nav-btn ${selectedTeam?._id === team._id ? 'active' : ''}`}
+              key={team.id}
+              className={`team-nav-btn ${selectedTeam?.id === team.id ? 'active' : ''}`}
               style={{ 
-                background: selectedTeam?._id === team._id ? getTeamColor(team.teamName).gradient : 'rgba(255, 255, 255, 0.1)',
-                borderColor: getTeamColor(team.teamName).primary
+                background: selectedTeam?.id === team.id ? getTeamColor(team.team_name).gradient : 'rgba(255, 255, 255, 0.1)',
+                borderColor: getTeamColor(team.team_name).primary
               }}
               onClick={() => setSelectedTeam(team)}
             >
-              <div className="team-nav-name">{team.teamName}</div>
-              <div className="team-nav-count">{team.players.length} Players</div>
+              <div className="team-nav-name">{team.team_name}</div>
+              <div className="team-nav-count">{team.players?.length || 0} Players</div>
             </button>
           ))}
         </div>
@@ -139,28 +141,28 @@ const Teams = () => {
         <div className="team-details-section">
           <div className="team-details-container">
             {/* Team Header Card */}
-            <div className="team-header-card" style={{ background: getTeamColor(selectedTeam.teamName).gradient }}>
+            <div className="team-header-card" style={{ background: getTeamColor(selectedTeam.team_name).gradient }}>
               <div className="team-header-content">
                 <div className="team-logo">
                   <div className="team-logo-circle">
-                    {selectedTeam.teamName.charAt(0)}
+                    {selectedTeam.team_name.charAt(0)}
                   </div>
                 </div>
                 <div className="team-header-info">
-                  <h2>{selectedTeam.teamName}</h2>
+                  <h2>{selectedTeam.team_name}</h2>
                   <div className="team-stats-row">
                     <div className="team-stat">
-                      <div className="stat-value">{selectedTeam.players.length}</div>
+                      <div className="stat-value">{selectedTeam.players?.length || 0}</div>
                       <div className="stat-label">Players</div>
                     </div>
                     <div className="stat-divider"></div>
                     <div className="team-stat">
-                      <div className="stat-value">LKR {getTotalSpent(selectedTeam).toLocaleString()}</div>
+                      <div className="stat-value">LKR {(Number(getTotalSpent(selectedTeam)) || 0).toLocaleString()}</div>
                       <div className="stat-label">Total Spent</div>
                     </div>
                     <div className="stat-divider"></div>
                     <div className="team-stat">
-                      <div className="stat-value">LKR {selectedTeam.remainingBudget.toLocaleString()}</div>
+                      <div className="stat-value">LKR {(Number(selectedTeam.remaining_budget) || 0).toLocaleString()}</div>
                       <div className="stat-label">Remaining</div>
                     </div>
                   </div>
@@ -169,7 +171,7 @@ const Teams = () => {
             </div>
 
             {/* Players Grid */}
-            {selectedTeam.players.length === 0 ? (
+            {selectedTeam.players?.length === 0 ? (
               <div className="no-players-section">
                 <div className="no-players-icon">🏏</div>
                 <h3>No Players Yet</h3>
@@ -180,18 +182,18 @@ const Teams = () => {
               </div>
             ) : (
               <div className="team-players-grid">
-                {selectedTeam.players.map((player, index) => (
-                  <div key={player._id} className="team-player-card">
-                    <div className="player-card-number" style={{ background: getTeamColor(selectedTeam.teamName).gradient }}>
+                {selectedTeam.players?.map((player, index) => (
+                  <div key={player.id} className="team-player-card">
+                    <div className="player-card-number" style={{ background: getTeamColor(selectedTeam.team_name).gradient }}>
                       #{index + 1}
                     </div>
-                    {player.playerRole && player.playerRole !== 'Regular' && (
+                    {player.player_role && player.player_role !== 'Regular' && (
                       <div className="player-role-badge" style={{
                         position: 'absolute',
                         top: '10px',
                         right: '10px',
                         padding: '6px 12px',
-                        background: player.playerRole === 'Captain' 
+                        background: player.player_role === 'Captain' 
                           ? 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' 
                           : 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
                         color: 'white',
@@ -203,33 +205,33 @@ const Teams = () => {
                         boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
                         zIndex: 10
                       }}>
-                        {player.playerRole === 'Captain' ? '⭐ CAPTAIN' : '👔 MANAGER'}
+                        {player.player_role === 'Captain' ? '⭐ CAPTAIN' : '👔 MANAGER'}
                       </div>
                     )}
-                    <div className="team-player-avatar" style={{ background: getAvatarColor(player.playerName) }}>
-                      {getInitials(player.playerName)}
+                    <div className="team-player-avatar" style={{ background: getAvatarColor(player.player_name) }}>
+                      {getInitials(player.player_name)}
                     </div>
-                    <div className="team-player-name">{player.playerName}</div>
+                    <div className="team-player-name">{player.player_name}</div>
                     <div className="team-player-age">{player.age} years</div>
                     
                     <div className="team-player-stats">
                       <div className="stat-item">
                         <span className="stat-icon">🏏</span>
-                        <span className="stat-text">{player.battingSide}</span>
+                        <span className="stat-text">{player.batting_side}</span>
                       </div>
                       <div className="stat-item">
                         <span className="stat-icon">⚾</span>
-                        <span className="stat-text">{player.bowlingSide}</span>
+                        <span className="stat-text">{player.bowling_side}</span>
                       </div>
                       <div className="stat-item full">
-                        <span className="stat-icon">{getBowlingIcon(player.bowlingStyle)}</span>
-                        <span className="stat-text">{player.bowlingStyle}</span>
+                        <span className="stat-icon">{getBowlingIcon(player.bowling_style)}</span>
+                        <span className="stat-text">{player.bowling_style}</span>
                       </div>
                     </div>
 
-                    <div className="team-player-value" style={{ background: getTeamColor(selectedTeam.teamName).gradient }}>
-                      LKR {player.soldValue.toLocaleString()}
-                      {(player.playerRole === 'Captain' || player.playerRole === 'Manager') && (
+                    <div className="team-player-value" style={{ background: getTeamColor(selectedTeam.team_name).gradient }}>
+                      LKR {(Number(player.sold_value) || 0).toLocaleString()}
+                      {(player.player_role === 'Captain' || player.player_role === 'Manager') && (
                         <span style={{fontSize: '11px', display: 'block', marginTop: '3px', opacity: 0.9}}>
                           (Hold Player)
                         </span>
@@ -253,20 +255,20 @@ const Teams = () => {
           <h2>Tournament Summary</h2>
           <div className="summary-grid">
             {teams.map(team => (
-              <div key={team._id} className="summary-card" style={{ borderTopColor: getTeamColor(team.teamName).primary }}>
-                <h3>{team.teamName}</h3>
+              <div key={team.id} className="summary-card" style={{ borderTopColor: getTeamColor(team.team_name)?.primary }}>
+                <h3>{team.team_name}</h3>
                 <div className="summary-stats">
                   <div className="summary-stat">
                     <span className="summary-label">Players:</span>
-                    <span className="summary-value">{team.players.length}</span>
+                    <span className="summary-value">{team.players?.length || 0}</span>
                   </div>
                   <div className="summary-stat">
                     <span className="summary-label">Spent:</span>
-                    <span className="summary-value">LKR {getTotalSpent(team).toLocaleString()}</span>
+                    <span className="summary-value">LKR {(Number(getTotalSpent(team)) || 0).toLocaleString()}</span>
                   </div>
                   <div className="summary-stat">
                     <span className="summary-label">Remaining:</span>
-                    <span className="summary-value">LKR {team.remainingBudget.toLocaleString()}</span>
+                    <span className="summary-value">LKR {(Number(team.remaining_budget) || 0).toLocaleString()}</span>
                   </div>
                 </div>
               </div>

@@ -23,7 +23,7 @@ const Admin = () => {
     setMessage({ type: '', text: '' });
 
     try {
-      const response = await axios.delete('http://localhost:5000/api/players/truncate');
+      const response = await axios.delete('http://localhost:8081/backend/api/players/truncate.php');
       setMessage({ 
         type: 'success', 
         text: `${response.data.message} (${response.data.deletedCount} players deleted)` 
@@ -47,7 +47,7 @@ const Admin = () => {
     setMessage({ type: '', text: '' });
 
     try {
-      const response = await axios.delete('http://localhost:5000/api/teams/truncate');
+      const response = await axios.delete('http://localhost:8081/backend/api/teams/truncate.php');
       setMessage({ 
         type: 'success', 
         text: response.data.message 
@@ -72,10 +72,10 @@ const Admin = () => {
 
     try {
       // First truncate teams
-      await axios.delete('http://localhost:5000/api/teams/truncate');
+      await axios.delete('http://localhost:8081/backend/api/teams/truncate.php');
       
       // Then truncate players
-      const playerResponse = await axios.delete('http://localhost:5000/api/players/truncate');
+      const playerResponse = await axios.delete('http://localhost:8081/backend/api/players/truncate.php');
       
       setMessage({ 
         type: 'success', 
