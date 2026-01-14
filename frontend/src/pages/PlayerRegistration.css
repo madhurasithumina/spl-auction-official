@@ -143,6 +143,7 @@
 .form-header {
   text-align: center;
   margin-bottom: 40px;
+  position: relative;
 }
 
 .form-header h2 {
@@ -157,6 +158,26 @@
 .form-header p {
   color: rgba(255, 255, 255, 0.8);
   font-size: 16px;
+}
+
+.new-player-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.new-player-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 184, 148, 0.4);
 }
 
 /* Form Fields */
@@ -185,6 +206,80 @@
 
 .label-icon {
   font-size: 18px;
+}
+
+.update-badge {
+  background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-left: 10px;
+  text-transform: none;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Autocomplete Wrapper */
+.autocomplete-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.suggestions-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #1a2847;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  margin-top: 5px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.suggestion-item {
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-item:hover {
+  background: rgba(255, 8, 68, 0.2);
+}
+
+.suggestion-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.suggestion-name {
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.suggestion-details {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
 }
 
 .form-field input[type="text"],
@@ -259,6 +354,84 @@
   box-shadow: 0 4px 15px rgba(255, 8, 68, 0.4);
 }
 
+/* File Input */
+.file-input {
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.file-input:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.file-input:focus {
+  outline: none;
+  border-color: #ff0844;
+  box-shadow: 0 0 0 3px rgba(255, 8, 68, 0.2);
+}
+
+.file-input::file-selector-button {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #ff0844 0%, #ff6b35 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 10px;
+}
+
+.file-input::file-selector-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 8, 68, 0.4);
+}
+
+/* Image Preview */
+.image-preview {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.image-preview img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.remove-image-btn {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.remove-image-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+}
+
 /* Message */
 .message {
   padding: 15px 20px;
@@ -287,6 +460,11 @@
 
 .message.error {
   background: #ff7675;
+  color: white;
+}
+
+.message.info {
+  background: #0984e3;
   color: white;
 }
 
