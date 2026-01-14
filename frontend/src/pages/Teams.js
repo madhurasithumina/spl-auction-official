@@ -8,6 +8,7 @@ const Teams = () => {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTeam, setSelectedTeam] = useState(null);
+  const [imageErrors, setImageErrors] = useState({});
   const userRole = localStorage.getItem('userRole') || 'admin';
 
   useEffect(() => {
@@ -64,6 +65,13 @@ const Teams = () => {
       return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     }
     return name.substring(0, 2).toUpperCase();
+  };
+
+  const handleImageError = (playerId) => {
+    setImageErrors(prev => ({
+      ...prev,
+      [playerId]: true
+    }));
   };
 
   const getBowlingIcon = (style) => {
@@ -196,58 +204,71 @@ const Teams = () => {
               <div className="team-players-grid">
                 {selectedTeam.players?.map((player, index) => (
                   <div key={player.id} className="team-player-card">
-                    <div className="player-card-number" style={{ background: getTeamColor(selectedTeam.team_name).gradient }}>
-                      #{index + 1}
-                    </div>
-                    {player.player_role && player.player_role !== 'Regular' && (
-                      <div className="player-role-badge" style={{
-                        position: 'absolute',
-                        top: '10px',
-                        right: '10px',
-                        padding: '6px 12px',
-                        background: player.player_role === 'Captain' 
-                          ? 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' 
-                          : 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-                        color: 'white',
-                        borderRadius: '20px',
-                        fontSize: '12px',
-                        fontWeight: '700',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.5px',
-                        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
-                        zIndex: 10
-                      }}>
-                        {player.player_role === 'Captain' ? '⭐ CAPTAIN' : '👔 MANAGER'}
-                      </div>
-                    )}
-                    <div className="team-player-avatar" style={{ background: getAvatarColor(player.player_name) }}>
-                      {getInitials(player.player_name)}
-                    </div>
-                    <div className="team-player-name">{player.player_name}</div>
-                    <div className="team-player-age">{player.age} years</div>
-                    
-                    <div className="team-player-stats">
-                      <div className="stat-item">
-                        <span className="stat-icon">🏏</span>
-                        <span className="stat-text">{player.batting_side}</span>
-                      </div>
-                      <div className="stat-item">
-                        <span className="stat-icon">⚾</span>
-                        <span className="stat-text">{player.bowling_side}</span>
-                      </div>
-                      <div className="stat-item full">
-                        <span className="stat-icon">{getBowlingIcon(player.bowling_style)}</span>
-                        <span className="stat-text">{player.bowling_style}</span>
-                      </div>
-                    </div>
-
-                    <div className="team-player-value" style={{ background: getTeamColor(selectedTeam.team_name).gradient }}>
-                      LKR {(Number(player.sold_value) || 0).toLocaleString()}
-                      {(player.player_role === 'Captain' || player.player_role === 'Manager') && (
-                        <span style={{fontSize: '11px', display: 'block', marginTop: '3px', opacity: 0.9}}>
-                          (Hold Player)
-                        </span>
+                    <div className="team-player-image-wrapper">
+                      {!imageErrors[player.id] ? (
+                        <img 
+                          src={`https://spl.sarasagroup.lk/assets/Images/players/${player.id}.png`}
+                          alt={player.player_name}
+                          className="team-player-full-image"
+                          onError={() => handleImageError(player.id)}
+                        />
+                      ) : (
+                        <div className="team-player-avatar-fallback" style={{ background: getAvatarColor(player.player_name) }}>
+                          {getInitials(player.player_name)}
+                        </div>
                       )}
+                      
+                      {player.sold_status === 'sold' && (
+                        <img 
+                          src="/assets/soldout.png"
+                          alt="Sold"
+                          className="sold-watermark"
+                        />
+                      )}
+                      
+                      {player.sold_status === 'hold' && (
+                        <img 
+                          src="/assets/on-hold.png"
+                          alt="On Hold"
+                          className="sold-watermark"
+                        />
+                      )}
+                      
+                      {player.player_role && player.player_role !== 'Regular' && (
+                        <div className="player-role-badge">
+                          {player.player_role === 'Captain' ? '⭐ CAPTAIN' : '👔 MANAGER'}
+                        </div>
+                      )}
+                      
+                      <div className="team-player-overlay">
+                        <div className="team-player-footer">
+                          <div className="player-card-number" style={{ background: getTeamColor(selectedTeam.team_name).gradient }}>
+                            #{index + 1}
+                          </div>
+                          <div className="team-player-name">{player.player_name}</div>
+                          <div className="team-player-age">{player.age} years</div>
+                          
+                          <div className="team-player-stats">
+                            <div className="stat-item">
+                              <span className="stat-icon">🏏</span>
+                              <span className="stat-text">{player.batting_side}</span>
+                            </div>
+                            <div className="stat-item">
+                              <span className="stat-icon">{getBowlingIcon(player.bowling_style)}</span>
+                              <span className="stat-text">{player.bowling_style}</span>
+                            </div>
+                          </div>
+
+                          <div className="team-player-value" style={{ background: getTeamColor(selectedTeam.team_name).gradient }}>
+                            LKR {(Number(player.sold_value) || 0).toLocaleString()}
+                            {(player.player_role === 'Captain' || player.player_role === 'Manager') && (
+                              <span style={{fontSize: '10px', display: 'block', marginTop: '2px', opacity: 0.9}}>
+                                (Hold Player)
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}

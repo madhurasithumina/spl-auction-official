@@ -85,7 +85,7 @@ const ViewPlayers = () => {
 
   const getPlayerCardColor = (index) => {
     const colors = [
-      '#0d355c', // Navy Blue
+      '#2D3C59', // Navy Blue
 
     ];
     return colors[index % colors.length];
@@ -228,8 +228,8 @@ const ViewPlayers = () => {
                 <div className="player-card-image-wrapper">
                   {!imageErrors[player.id] ? (
                     <img 
-                      src={`https://spl.sarasagroup.lk/assets/Images/players/${player.player_name}.png`}
-                      alt={player.player_name}
+                      src={`https://spl.sarasagroup.lk/assets/Images/players/${player.id}.png`}
+                      alt={player.id}
                       className="player-full-image"
                       onError={() => handleImageError(player.id)}
                     />
@@ -239,7 +239,21 @@ const ViewPlayers = () => {
                     </div>
                   )}
                   
-                  <div className="player-card-overlay">
+                  {player.sold_status === 'Sold' && (
+                    <img 
+                      src="/assets/soldoutRound.png"
+                      alt="Sold"
+                      className="sold-watermark"
+                    />
+                  )}
+                  {player.sold_status === 'Hold' && (
+                    <img 
+                      src="/assets/on-hold.png"
+                      alt="On Hold"
+                      className="hold-watermark"
+                    />
+                  )}
+                                    <div className="player-card-overlay">
                     <div className="player-card-footer">
                       <div className="player-year-badge">
                         <div className="year-text">2026</div>
