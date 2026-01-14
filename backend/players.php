@@ -83,7 +83,8 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($player) {
         // Handle profile image upload if provided
         if (isset($_FILES['profileImage']) && $_FILES['profileImage']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = __DIR__ . '/../../assets/Images/players/';
+            // Use absolute path from document root
+            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/assets/Images/players/';
             
             // Create directory if it doesn't exist
             if (!is_dir($uploadDir)) {
