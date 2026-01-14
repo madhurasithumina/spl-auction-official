@@ -44,9 +44,10 @@ const Auction = () => {
   const fetchTeams = async () => {
     try {
       const response = await axios.get('https://spl.sarasagroup.lk/backend/api/teams.php');
-      setTeams(response.data);
+      setTeams(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error('Error fetching teams:', error);
+      setTeams([]);
     }
   };
 

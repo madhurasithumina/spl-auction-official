@@ -364,7 +364,7 @@ const PlayerRegistration = () => {
                     onChange={handleChange}
                   />
                   <span className="radio-custom">LHB (Left Hand Bat)</span>
-                </label>
+                </label>8
               </div>
             </div>
 
