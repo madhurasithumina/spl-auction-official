@@ -15,6 +15,13 @@ const ViewPlayers = () => {
 
   useEffect(() => {
     fetchPlayers();
+    
+    // Auto-refresh every 30 seconds
+    const interval = setInterval(() => {
+      fetchPlayers();
+    }, 30000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   const fetchPlayers = async () => {

@@ -12,7 +12,7 @@ const Login = () => {
     e.preventDefault();
     
     // Hardcoded credentials
-    if (username === 'Sarasa' && password === 'Sarasa@123') {
+    if (username === 'Sarasa' && password === 'Dev@Soft') {
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('username', username);
       localStorage.setItem('userRole', 'admin');

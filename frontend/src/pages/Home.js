@@ -74,7 +74,7 @@ const Home = () => {
           </div>
           <div className="stat-divider"></div>
           <div className="stat-item">
-            <div className="stat-number">40+</div>
+            <div className="stat-number">45+</div>
             <div className="stat-label">Players</div>
           </div>
         </div>

@@ -482,14 +482,14 @@ const PlayerRegistration = () => {
               <div className="stat-icon">🏏</div>
               <div className="stat-info">
                 <h4>Total Players</h4>
-                <p className="stat-value">100+</p>
+                <p className="stat-value">45+</p>
               </div>
             </div>
             <div className="stat-box">
               <div className="stat-icon">🏆</div>
               <div className="stat-info">
                 <h4>Teams</h4>
-                <p className="stat-value">8</p>
+                <p className="stat-value">4</p>
               </div>
             </div>
           </div>

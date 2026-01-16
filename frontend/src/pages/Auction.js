@@ -22,6 +22,14 @@ const Auction = () => {
     fetchPlayers();
     fetchTeams();
     initializeTeams();
+    
+    // Auto-refresh every 30 seconds
+    const interval = setInterval(() => {
+      fetchPlayers();
+      fetchTeams();
+    }, 30000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   const initializeTeams = async () => {
