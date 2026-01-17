@@ -236,7 +236,9 @@ const Teams = () => {
                       
                       {player.player_role && player.player_role !== 'Regular' && (
                         <div className="player-role-badge">
-                          {player.player_role === 'Captain' ? '⭐ CAPTAIN' : '👔 MANAGER'}
+                          {player.player_role === 'Captain' ? '⭐ CAPTAIN' : 
+                           player.player_role === 'Vice Captain' ? '⚡ VICE CAPTAIN' : 
+                           '👔 MANAGER'}
                         </div>
                       )}
                       
@@ -261,7 +263,7 @@ const Teams = () => {
 
                           <div className="team-player-value" style={{ background: getTeamColor(selectedTeam.team_name).gradient }}>
                             LKR {(Number(player.sold_value) || 0).toLocaleString()}
-                            {(player.player_role === 'Captain' || player.player_role === 'Manager') && (
+                            {(player.player_role === 'Captain' || player.player_role === 'Vice Captain' || player.player_role === 'Manager') && (
                               <span style={{fontSize: '10px', display: 'block', marginTop: '2px', opacity: 0.9}}>
                                 (Hold Player)
                               </span>
