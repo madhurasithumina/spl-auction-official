@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_ENDPOINTS, getPlayerImageUrl } from '../config/api';
 import './Teams.css';
 
 const Teams = () => {
@@ -17,7 +18,7 @@ const Teams = () => {
 
   const fetchTeams = async () => {
     try {
-      const response = await axios.get('https://spl.sarasagroup.lk/backend/api/teams.php');
+      const response = await axios.get(API_ENDPOINTS.teams);
       setTeams(response.data);
       if (response.data.length > 0) {
         setSelectedTeam(response.data[0]);
@@ -207,7 +208,7 @@ const Teams = () => {
                     <div className="team-player-image-wrapper">
                       {!imageErrors[player.id] ? (
                         <img 
-                          src={`https://spl.sarasagroup.lk/assets/Images/players/${player.id}.png`}
+                          src={getPlayerImageUrl(player.id)}
                           alt={player.player_name}
                           className="team-player-full-image"
                           onError={() => handleImageError(player.id)}

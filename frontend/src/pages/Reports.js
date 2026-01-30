@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
@@ -21,8 +22,8 @@ const Reports = () => {
   const fetchData = async () => {
     try {
       const [playersRes, teamsRes] = await Promise.all([
-        axios.get('https://spl.sarasagroup.lk/backend/api/players.php'),
-        axios.get('https://spl.sarasagroup.lk/backend/api/teams.php')
+        axios.get(API_ENDPOINTS.players),
+        axios.get(API_ENDPOINTS.teams)
       ]);
       setPlayers(playersRes.data);
       setTeams(teamsRes.data);

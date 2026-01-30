@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_ENDPOINTS, getPlayerImageUrl } from '../config/api';
 import './PlayerRegistration.css';
 
 const PlayerRegistration = () => {
@@ -39,7 +40,7 @@ const PlayerRegistration = () => {
 
   const fetchPlayers = async () => {
     try {
-      const response = await axios.get('https://spl.sarasagroup.lk/backend/api/players.php');
+      const response = await axios.get(API_ENDPOINTS.players);
       setPlayers(response.data);
     } catch (error) {
       console.error('Failed to fetch players:', error);
@@ -88,8 +89,7 @@ const PlayerRegistration = () => {
     setSearchResults([]);
     
     // Load existing profile picture if exists
-    // const imageUrl = `https://spl.sarasagroup.lk/assets/Images/players/${player.id}.png`;
-    const imageUrl = `https://spl.sarasagroup.lk/assets/Images/players/${player.id}.png`;
+    const imageUrl = getPlayerImageUrl(player.id);
     setImagePreview(imageUrl);
     setProfileImage(null); // Reset file input
     
@@ -155,7 +155,7 @@ const PlayerRegistration = () => {
         submitData.append('_method', 'PUT');
         submitData.append('playerId', selectedPlayerId);
         
-        await axios.post('https://spl.sarasagroup.lk/backend/api/players.php', submitData, {
+        await axios.post(API_ENDPOINTS.players, submitData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
@@ -167,7 +167,7 @@ const PlayerRegistration = () => {
         });
       } else {
         // Register new player
-        await axios.post('https://spl.sarasagroup.lk/backend/api/players.php', submitData, {
+        await axios.post(API_ENDPOINTS.players, submitData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }

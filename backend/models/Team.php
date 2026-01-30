@@ -32,7 +32,7 @@ class Team {
                          COUNT(p.id) as player_count,
                          GROUP_CONCAT(p.id) as player_ids
                   FROM {$this->table} t
-                  LEFT JOIN players p ON t.team_name = p.sold_team AND p.sold_status = 'Sold'
+                  LEFT JOIN players p ON t.team_name = p.sold_team AND (p.sold_status = 'Sold' OR p.sold_status = 'hold')
                   GROUP BY t.id
                   ORDER BY t.team_name";
         
@@ -67,11 +67,24 @@ class Team {
         
         return $team;
     }
-    
-    // Get team players
+        // Get team by ID
+    public function getById($teamId) {
+        $query = "SELECT * FROM {$this->table} WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':id', $teamId);
+        $stmt->execute();
+        $team = $stmt->fetch();
+        
+        if ($team) {
+            $team['players'] = $this->getTeamPlayers($team['team_name']);
+        }
+        
+        return $team;
+    }
+        // Get team players (includes sold and hold status)
     private function getTeamPlayers($teamName) {
         $query = "SELECT * FROM players 
-                  WHERE sold_team = :team_name AND sold_status = 'Sold'
+                  WHERE sold_team = :team_name AND (sold_status = 'Sold' OR sold_status = 'hold')
                   ORDER BY player_role DESC, player_name";
         
         $stmt = $this->db->prepare($query);

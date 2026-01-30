@@ -1,6 +1,69 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Home.css';
+
+const SponsorCarousel = () => {
+  const slides = [
+    { type: 'video', src: '/assets/sriyani.mp4', alt: 'Sriyani Dresspoint' }
+  ];
+
+  const [index, setIndex] = useState(0);
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    // start/refresh autoplay timer
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setIndex(i => (i + 1) % slides.length);
+    }, 6000);
+    return () => clearInterval(timerRef.current);
+  }, [slides.length]); // refresh if slides length changes
+
+  useEffect(() => {
+    // when slide changes, ensure video (if any) plays
+    const el = document.getElementById(`video-slide-${index}`);
+    if (el && el.play) {
+      el.currentTime = 0;
+      el.play().catch(() => {});
+    }
+  }, [index]);
+
+  const goTo = (i) => setIndex(i);
+  const prev = () => setIndex(i => (i - 1 + slides.length) % slides.length);
+  const next = () => setIndex(i => (i + 1) % slides.length);
+
+  return (
+    <div className="carousel">
+      {slides.map((s, i) => (
+        <div key={i} className={`carousel-slide ${i === index ? 'active' : ''}`}>
+          {s.type === 'video' ? (
+            <video
+              id={`video-slide-${i}`}
+              className="carousel-video"
+              src={s.src}
+              muted
+              autoPlay={i === index}
+              playsInline
+              loop
+              controls={false}
+            />
+          ) : (
+            <img className="carousel-image" src={s.src} alt={s.alt} />
+          )}
+        </div>
+      ))}
+
+      <button className="carousel-control prev" onClick={prev} aria-label="Previous">‹</button>
+      <button className="carousel-control next" onClick={next} aria-label="Next">›</button>
+
+      <div className="carousel-dots">
+        {slides.map((_, i) => (
+          <button key={i} className={`dot ${i === index ? 'active' : ''}`} onClick={() => goTo(i)} aria-label={`Go to slide ${i + 1}`}></button>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const Home = () => {
   const navigate = useNavigate();
@@ -30,6 +93,8 @@ const Home = () => {
             <button className="nav-button" onClick={() => navigate('/view-players')}>View Players</button>
             <button className="nav-button" onClick={() => navigate('/auction')}>Auction</button>
             <button className="nav-button" onClick={() => navigate('/teams')}>Teams</button>
+            <button className="nav-button" onClick={() => navigate('/match-setup')}>Match Setup</button>
+            <button className="nav-button" onClick={() => navigate('/live-scoreboard')}>Live Score</button>
             <button className="nav-button" onClick={() => navigate('/reports')}>Reports</button>
             <button className="nav-button" onClick={() => navigate('/admin')}>Admin</button>
             <button className="nav-button register-btn" onClick={handleRegisterPlayer}>
@@ -43,40 +108,11 @@ const Home = () => {
         </div>
       </header>
 
-      {/* Hero Section */}
+      {/* Hero Section (replaced with sponsor slideshow) */}
       <section className="hero-section">
         <div className="hero-overlay"></div>
-        <div className="hero-content">
-          <h1 className="hero-title">
-            WELCOME TO SPL CRICKET AUCTION
-          </h1>
-          <p className="hero-subtitle">
-            Premier Softball Cricket Tournament 2026
-          </p>
-          <div className="hero-buttons">
-            <button className="primary-button" onClick={() => navigate('/auction')}>
-              Start Auction
-            </button>
-            <button className="secondary-button" onClick={() => navigate('/teams')}>
-              View Teams
-            </button>
-          </div>
-        </div>
-        <div className="stats-bar">
-          <div className="stat-item">
-            <div className="stat-number">4</div>
-            <div className="stat-label">Teams</div>
-          </div>
-          <div className="stat-divider"></div>
-          <div className="stat-item">
-            <div className="stat-number">2026</div>
-            <div className="stat-label">Season</div>
-          </div>
-          <div className="stat-divider"></div>
-          <div className="stat-item">
-            <div className="stat-number">45+</div>
-            <div className="stat-label">Players</div>
-          </div>
+        <div className="hero-carousel-wrapper">
+          <SponsorCarousel />
         </div>
       </section>
 

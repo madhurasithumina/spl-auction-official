@@ -249,9 +249,334 @@ Frontend runs on: http://localhost:3000
 - Export team rosters
 - Print team sheets
 - Player performance tracking
-- Match scheduling
+- ~~Match scheduling~~ ✅ Implemented
 - Live bidding with multiple users
 - Notification system
+
+---
+
+## 🏏 Live Scoring System - Complete Workflow
+
+### Overview
+The SPL Live Scoring System provides professional cricket match management with ball-by-ball scoring, live scoreboard display, and comprehensive statistics tracking.
+
+### Pages
+| Page | Route | Description |
+|------|-------|-------------|
+| **Match Setup** | `/match-setup` | Create and configure new matches |
+| **Scoring** | `/scoring/:matchId` | Ball-by-ball live scoring interface |
+| **Live Scoreboard** | `/live-scoreboard` | Professional live match display |
+
+---
+
+## 🎯 Match Setup Workflow (`/match-setup`)
+
+### Step 1: Select Playing Teams
+1. Navigate to **Match Setup** from Home page
+2. Select **Team 1** from dropdown (e.g., Software)
+3. Select **Team 2** from dropdown (e.g., Marketing)
+4. Click **Next** to proceed
+
+### Step 2: Match Configuration
+1. Enter **Number of Overs** (e.g., 10, 15, 20)
+2. Enter **Venue Name** (e.g., SPL Stadium)
+3. Click **Next** to proceed
+
+### Step 3: Toss Details
+1. Select **Toss Winner** (Team 1 or Team 2)
+2. Select **Toss Decision**:
+   - **Bat First** - Winner chooses to bat
+   - **Bowl First** - Winner chooses to field
+3. Click **Next** to proceed
+
+### Step 4: Select Playing XI - Team 1
+1. View available players from Team 1's squad
+2. Click on **11 players** to select them for the match
+3. Selected players are highlighted
+4. Counter shows "Selected: X/11"
+5. Click **Next** when 11 players are selected
+
+### Step 5: Select Playing XI - Team 2
+1. View available players from Team 2's squad
+2. Click on **11 players** to select them for the match
+3. Click **Create Match** to finalize
+
+### Match Created!
+- Match is created with status: `setup`
+- Redirected to Scoring page automatically
+
+---
+
+## ⚾ Live Scoring Workflow (`/scoring/:matchId`)
+
+### Starting the Match
+1. Click **🏏 Start Match** button
+2. Match status changes to `live`
+3. First innings begins automatically
+
+### Initialize Innings
+When innings starts, you'll be prompted to select:
+1. **Opening Striker** - Select from batting team's XI
+2. **Opening Non-Striker** - Select from batting team's XI
+3. **Opening Bowler** - Select from bowling team's XI
+4. Click **Start Innings** to begin scoring
+
+### Scoring a Ball
+
+#### Run Selection
+| Button | Description |
+|--------|-------------|
+| **0** | Dot ball |
+| **1** | Single run |
+| **2** | Double run |
+| **3** | Triple run |
+| **4** | Boundary four |
+| **5** | Five runs |
+| **6** | Boundary six |
+
+#### Extras Selection
+| Extra | Description | Runs Added | Ball Counted |
+|-------|-------------|------------|--------------|
+| **Wide** | Ball too wide | +1 run | ❌ No |
+| **No Ball** | Illegal delivery | +1 run | ❌ No |
+| **Bye** | Runs without bat contact | +X runs | ✅ Yes |
+| **Leg Bye** | Runs off pads | +X runs | ✅ Yes |
+| **Penalty (5)** | Umpire penalty | +5 runs | ❌ No |
+
+#### Recording a Wicket
+1. Click **🎯 WICKET** button
+2. Select **Dismissal Type**:
+   - Bowled
+   - Caught
+   - LBW
+   - Run Out
+   - Stumped
+   - Hit Wicket
+3. For **Run Out**: Select which batsman is out
+4. For **Caught/Run Out/Stumped**: Select fielder
+5. Click **Confirm Wicket**
+6. Click **✓ Confirm Ball** to record
+
+### Action Buttons
+| Button | Action |
+|--------|--------|
+| **✓ Confirm Ball** | Record the current ball |
+| **↩ Undo** | Undo last recorded ball |
+| **End Innings** | End current innings |
+| **End Match** | Manually end the match |
+
+### Over Completion
+- After 6 legal deliveries (excluding wides/no balls)
+- System prompts for **New Bowler** selection
+- Strike automatically rotates
+
+### Innings Completion
+Innings ends when:
+- All overs completed
+- 10 wickets fallen
+- Manual "End Innings" clicked
+
+### Innings Break
+- System shows target for second innings
+- Click **Start 2nd Innings** to continue
+- Select new opening batsmen and bowler
+
+### Match Completion
+- Match ends after second innings
+- Winner automatically determined
+- Or click **End Match** to end manually
+
+---
+
+## 📺 Live Scoreboard (`/live-scoreboard`)
+
+### Features
+- **Auto-refresh** every 3 seconds
+- **Multiple view modes**: Scorecard, Batsmen, Bowlers
+- **Professional display** with team colors
+
+### View Modes
+
+#### Scorecard View
+- Team scores with run rate
+- Current batsmen at crease
+- Current bowler stats
+- Partnership information
+- Recent overs display
+
+#### Batsmen View
+- All batsmen statistics
+- Runs, balls, 4s, 6s, strike rate
+- Status (batting/out/yet to bat)
+- Dismissal details
+
+#### Bowlers View
+- All bowler statistics
+- Overs, maidens, runs, wickets
+- Economy rate
+- Best figures
+
+### Match Selection
+- Dropdown to select from active matches
+- Auto-selects live match if available
+- URL parameter support: `/live-scoreboard?match=123`
+
+---
+
+## 📊 Scoring Rules Summary
+
+### Wide Ball
+```
+Runs: +1 (minimum)
+Ball Count: Does NOT count
+Batsman Runs: No
+Extra Type: Wide
+```
+
+### No Ball
+```
+Runs: +1 (minimum)
+Ball Count: Does NOT count
+Free Hit: Next ball (future enhancement)
+Extra Type: No Ball
+```
+
+### Penalty Runs
+```
+Runs: +5
+Ball Count: Does NOT count
+Awarded by: Umpire decision
+Reason: Illegal fielding, time wasting, etc.
+```
+
+### Boundary
+```
+Four: Ball crosses boundary after bounce
+Six: Ball crosses boundary without bounce
+Counted as: Batsman runs
+```
+
+---
+
+## 🔌 Scoring API Endpoints
+
+### Match Management
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/matches/index.php` | Get all matches |
+| POST | `/api/matches/index.php` | Create new match |
+| PUT | `/api/matches/index.php` | Update match (start/end) |
+
+### Playing XI
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/matches/playing_xi.php` | Set playing XI |
+| GET | `/api/matches/playing_xi.php?match_id=X` | Get playing XI |
+
+### Innings & Scoring
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/innings/index.php?match_id=X` | Get innings details |
+| POST | `/api/innings/index.php` | Create/initialize innings |
+| POST | `/api/innings/score.php` | Record a ball |
+| DELETE | `/api/innings/score.php` | Undo last ball |
+
+### Live Data
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/matches/live.php?match_id=X` | Get live match data |
+
+---
+
+## 🎨 Scoring Interface Colors
+
+| Element | Color | Meaning |
+|---------|-------|---------|
+| 🟢 Green | `#43e97b` | Boundary (4/6) |
+| 🔴 Red | `#f5576c` | Wicket |
+| 🟡 Yellow | `#f093fb` | Extras (Wide/No Ball) |
+| ⚫ Gray | `#6c757d` | Dot ball |
+| 🔵 Blue | `#4facfe` | Normal runs |
+
+---
+
+## 🔄 Complete Match Flow
+
+```
+┌─────────────────┐
+│  MATCH SETUP    │
+│  /match-setup   │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Select Teams    │
+│ Team 1 & Team 2 │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Set Overs &     │
+│ Venue           │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Toss Winner &   │
+│ Decision        │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Select Playing  │
+│ XI (Both Teams) │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│   SCORING       │
+│ /scoring/:id    │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Start Match     │
+│ Initialize      │
+│ Innings         │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Ball-by-Ball    │◄──────┐
+│ Scoring         │       │
+└────────┬────────┘       │
+         │                │
+         ▼                │
+┌─────────────────┐       │
+│ Wicket/Over     │───────┘
+│ Changes         │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Innings End     │
+│ Start 2nd       │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Match Complete  │
+│ Show Winner     │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ LIVE SCOREBOARD │
+│ /live-scoreboard│
+└─────────────────┘
+```
+
+---
 
 ## 🐛 Troubleshooting
 

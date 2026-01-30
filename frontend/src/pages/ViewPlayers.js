@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_ENDPOINTS, getPlayerImageUrl } from '../config/api';
 import './ViewPlayers.css';
 
 const ViewPlayers = () => {
@@ -26,7 +27,7 @@ const ViewPlayers = () => {
 
   const fetchPlayers = async () => {
     try {
-      const response = await axios.get('https://spl.sarasagroup.lk/backend/api/players.php');
+      const response = await axios.get(API_ENDPOINTS.players);
       // Ensure response.data is an array
       if (Array.isArray(response.data)) {
         setPlayers(response.data);
@@ -78,16 +79,6 @@ const ViewPlayers = () => {
       return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     }
     return name.substring(0, 2).toUpperCase();
-  };
-
-  const getBowlingIcon = (style) => {
-    const icons = {
-      'Fast Bowling': '⚡',
-      'Medium Fast': '💨',
-      'Off Spin': '🌀',
-      'Leg Spin': '🎯'
-    };
-    return icons[style] || '⚾';
   };
 
   const getPlayerCardColor = (index) => {
@@ -235,7 +226,7 @@ const ViewPlayers = () => {
                 <div className="player-card-image-wrapper">
                   {!imageErrors[player.id] ? (
                     <img 
-                      src={`https://spl.sarasagroup.lk/assets/Images/players/${player.id}.png`}
+                      src={getPlayerImageUrl(player.id)}
                       alt={player.id}
                       className="player-full-image"
                       onError={() => handleImageError(player.id)}

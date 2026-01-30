@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 import './Auction.css';
 
 const Auction = () => {
@@ -34,7 +35,7 @@ const Auction = () => {
 
   const initializeTeams = async () => {
     try {
-      await axios.post('https://spl.sarasagroup.lk/backend/api/teams/initialize.php');
+      await axios.post(API_ENDPOINTS.teamsInitialize);
     } catch (error) {
       console.error('Error initializing teams:', error);
     }
@@ -42,7 +43,7 @@ const Auction = () => {
 
   const fetchPlayers = async () => {
     try {
-      const response = await axios.get('https://spl.sarasagroup.lk/backend/api/players.php');
+      const response = await axios.get(API_ENDPOINTS.players);
       setPlayers(response.data.filter(p => p.sold_status !== 'Sold'));
     } catch (error) {
       console.error('Error fetching players:', error);
@@ -51,7 +52,7 @@ const Auction = () => {
 
   const fetchTeams = async () => {
     try {
-      const response = await axios.get('https://spl.sarasagroup.lk/backend/api/teams.php');
+      const response = await axios.get(API_ENDPOINTS.teams);
       setTeams(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error('Error fetching teams:', error);
@@ -126,7 +127,7 @@ const Auction = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('https://spl.sarasagroup.lk/backend/api/teams/auction.php', {
+      const response = await axios.post(API_ENDPOINTS.teamsAuction, {
         playerId: selectedPlayer.id,
         teamName: selectedTeam,
         soldValue: (playerRole === 'Captain' || playerRole === 'Manager') ? 0 : parseInt(soldValue),

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 import './Admin.css';
 
 const Admin = () => {
@@ -23,7 +24,7 @@ const Admin = () => {
     setMessage({ type: '', text: '' });
 
     try {
-      const response = await axios.delete('https://spl.sarasagroup.lk/backend/api/players/truncate.php');
+      const response = await axios.delete(API_ENDPOINTS.playersTruncate);
       setMessage({ 
         type: 'success', 
         text: `${response.data.message} (${response.data.deletedCount} players deleted)` 
@@ -47,7 +48,7 @@ const Admin = () => {
     setMessage({ type: '', text: '' });
 
     try {
-      const response = await axios.delete('https://spl.sarasagroup.lk/backend/api/teams/truncate.php');
+      const response = await axios.delete(API_ENDPOINTS.teamsTruncate);
       setMessage({ 
         type: 'success', 
         text: response.data.message 
@@ -72,10 +73,10 @@ const Admin = () => {
 
     try {
       // First truncate teams
-      await axios.delete('https://spl.sarasagroup.lk/backend/api/teams/truncate.php');
+      await axios.delete(API_ENDPOINTS.teamsTruncate);
       
       // Then truncate players
-      const playerResponse = await axios.delete('https://spl.sarasagroup.lk/backend/api/players/truncate.php');
+      const playerResponse = await axios.delete(API_ENDPOINTS.playersTruncate);
       
       setMessage({ 
         type: 'success', 

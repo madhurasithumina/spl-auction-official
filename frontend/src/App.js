@@ -9,6 +9,9 @@ import Auction from './pages/Auction';
 import Teams from './pages/Teams';
 import Reports from './pages/Reports';
 import Admin from './pages/Admin';
+import MatchSetup from './pages/MatchSetup';
+import Scoring from './pages/Scoring';
+import LiveScoreboard from './pages/LiveScoreboard';
 import './App.css';
 
 function App() {
@@ -92,6 +95,30 @@ function App() {
               <AdminRoute>
                 <Admin />
               </AdminRoute>
+            } 
+          />
+          <Route 
+            path="/match-setup" 
+            element={
+              <AdminRoute>
+                <MatchSetup />
+              </AdminRoute>
+            } 
+          />
+          <Route 
+            path="/scoring/:matchId" 
+            element={
+              <AdminRoute>
+                <Scoring />
+              </AdminRoute>
+            } 
+          />
+          <Route 
+            path="/live-scoreboard" 
+            element={
+              <PrivateRoute>
+                <LiveScoreboard />
+              </PrivateRoute>
             } 
           />
         </Routes>
