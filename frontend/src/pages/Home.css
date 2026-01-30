@@ -442,6 +442,68 @@
 
 .dot.active { background: #ff0844; box-shadow: 0 4px 10px rgba(255,8,68,0.25); }
 
+.video-unmute-btn {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  z-index: 5;
+  background: rgba(0,0,0,0.45);
+  color: #fff;
+  border: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+}
+
+.video-unmute-btn:hover {
+  background: rgba(0,0,0,0.6);
+}
+
+/* Sponsors marquee */
+.sponsors-marquee {
+  width: 100%;
+  background: rgba(10,14,39,0.95);
+  padding: 10px 0;
+  overflow: hidden;
+  border-top: 2px solid rgba(255,255,255,0.04);
+  border-bottom: 2px solid rgba(255,255,255,0.02);
+}
+
+.marquee-track {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  white-space: nowrap;
+  padding-left: 10px;
+  animation: marquee 18s linear infinite;
+}
+
+.marquee-item {
+  color: #fff;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.6px;
+  padding: 6px 10px;
+}
+
+.marquee-track:hover { animation-play-state: paused; }
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (max-width: 768px) {
+  .marquee-item { font-size: 14px; gap: 18px; }
+}
+
 @media (max-width: 768px) {
   .header-content {
     flex-direction: column;

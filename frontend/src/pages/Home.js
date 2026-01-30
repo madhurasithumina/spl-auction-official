@@ -8,7 +8,9 @@ const SponsorCarousel = () => {
   ];
 
   const [index, setIndex] = useState(0);
+  const [isMuted, setIsMuted] = useState(true);
   const timerRef = useRef(null);
+  const slideRefs = useRef([]);
 
   useEffect(() => {
     // start/refresh autoplay timer
@@ -20,13 +22,21 @@ const SponsorCarousel = () => {
   }, [slides.length]); // refresh if slides length changes
 
   useEffect(() => {
-    // when slide changes, ensure video (if any) plays
-    const el = document.getElementById(`video-slide-${index}`);
-    if (el && el.play) {
-      el.currentTime = 0;
-      el.play().catch(() => {});
-    }
-  }, [index]);
+    // when slide changes, ensure the active video plays from start
+    const el = slideRefs.current[index];
+    slideRefs.current.forEach((v, i) => {
+      if (!v) return;
+      try {
+        if (i === index) {
+          v.currentTime = 0;
+          v.muted = isMuted;
+          v.play().catch(() => {});
+        } else {
+          v.pause();
+        }
+      } catch (e) {}
+    });
+  }, [index, isMuted]);
 
   const goTo = (i) => setIndex(i);
   const prev = () => setIndex(i => (i - 1 + slides.length) % slides.length);
@@ -37,16 +47,35 @@ const SponsorCarousel = () => {
       {slides.map((s, i) => (
         <div key={i} className={`carousel-slide ${i === index ? 'active' : ''}`}>
           {s.type === 'video' ? (
-            <video
-              id={`video-slide-${i}`}
-              className="carousel-video"
-              src={s.src}
-              muted
-              autoPlay={i === index}
-              playsInline
-              loop
-              controls={false}
-            />
+            <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+              <video
+                id={`video-slide-${i}`}
+                ref={(el) => (slideRefs.current[i] = el)}
+                className="carousel-video"
+                src={s.src}
+                muted={isMuted}
+                autoPlay={i === index}
+                playsInline
+                loop
+                controls={false}
+              />
+              <button
+                className={`video-unmute-btn ${isMuted ? 'muted' : 'unmuted'}`}
+                onClick={() => {
+                  const v = slideRefs.current[i];
+                  if (!v) return;
+                  const newMuted = !isMuted;
+                  setIsMuted(newMuted);
+                  try {
+                    v.muted = newMuted;
+                    if (!newMuted) v.play().catch(() => {});
+                  } catch (e) {}
+                }}
+                aria-label={isMuted ? 'Unmute video' : 'Mute video'}
+              >
+                {isMuted ? '🔇' : '🔊'}
+              </button>
+            </div>
           ) : (
             <img className="carousel-image" src={s.src} alt={s.alt} />
           )}
@@ -59,6 +88,20 @@ const SponsorCarousel = () => {
       <div className="carousel-dots">
         {slides.map((_, i) => (
           <button key={i} className={`dot ${i === index ? 'active' : ''}`} onClick={() => goTo(i)} aria-label={`Go to slide ${i + 1}`}></button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const SponsorsMarquee = ({ names = [] }) => {
+  // duplicate the list to create a smooth looping marquee
+  const items = [...names, ...names];
+  return (
+    <div className="sponsors-marquee" role="region" aria-label="Sponsors">
+      <div className="marquee-track">
+        {items.map((n, i) => (
+          <div className="marquee-item" key={i}>{n}</div>
         ))}
       </div>
     </div>
@@ -147,6 +190,7 @@ const Home = () => {
 
       {/* Footer */}
       <footer className="footer">
+        <SponsorsMarquee names={["Sriyani Dress Point", "Nolimit", "Karunarathne Stores"]} />
         <div className="footer-content">
           <p>&copy; 2026 SPL Cricket Auction. All rights reserved.</p>
           <p>Powered by MERN Stack</p>
