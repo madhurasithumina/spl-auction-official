@@ -16,6 +16,8 @@ const LiveScoreboard = () => {
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState('scorecard'); // scorecard, batsmen, bowlers
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [navOpen, setNavOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const [incompleteMatches, setIncompleteMatches] = useState([]);
 
   const fetchMatchDetails = useCallback(async (matchId) => {
@@ -145,16 +147,36 @@ const LiveScoreboard = () => {
             <div className="cricket-ball-small"></div>
             <h1>SPL LIVE</h1>
           </div>
-          <nav className="nav-menu">
-            <button className="nav-button" onClick={() => navigate('/')}>Home</button>
-            <button className="nav-button active">Live Scores</button>
-            <button className="nav-button" onClick={() => navigate('/match-setup')}>New Match</button>
-            {incompleteMatches.length > 0 && (
-              <button className="nav-button live-match" onClick={() => navigate(`/scoring/${incompleteMatches[0].id}`)}>
-                <span className="live-dot"></span>
-                {incompleteMatches[0].status === 'innings_break' ? 'Start 2nd Innings' : 'Continue Scoring'}
-              </button>
-            )}
+          <button
+            className={`nav-toggle ${navOpen ? 'open' : ''}`}
+            aria-expanded={navOpen}
+            aria-label="Toggle navigation"
+            onClick={() => setNavOpen(!navOpen)}
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+          <nav className={`nav-menu ${navOpen ? 'open' : ''}`}>
+            <div className="nav-primary">
+              <button className="nav-button" onClick={() => { navigate('/'); setNavOpen(false); setMoreOpen(false); }}>Home</button>
+              <button className="nav-button active" onClick={() => { setNavOpen(false); setMoreOpen(false); }}>Live Scores</button>
+            </div>
+
+            <button className="more-button nav-button" onClick={() => setMoreOpen(!moreOpen)} aria-expanded={moreOpen}>
+              More ▾
+            </button>
+
+            <div className={`more-menu ${moreOpen ? 'open' : ''}`}>
+              <button className="nav-button" onClick={() => { navigate('/match-setup'); setNavOpen(false); setMoreOpen(false); }}>New Match</button>
+              {incompleteMatches.length > 0 && (
+                <button className="nav-button live-match" onClick={() => { navigate(`/scoring/${incompleteMatches[0].id}`); setNavOpen(false); setMoreOpen(false); }}>
+                  <span className="live-dot"></span>
+                  {incompleteMatches[0].status === 'innings_break' ? 'Start 2nd Innings' : 'Continue Scoring'}
+                </button>
+              )}
+            </div>
           </nav>
           <div className="header-controls">
             <label className="auto-refresh-toggle">

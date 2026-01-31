@@ -60,6 +60,74 @@
   gap: 10px;
 }
 
+/* Nav toggle (hamburger) */
+.nav-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  width: 36px;
+  height: 30px;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.nav-toggle span {
+  display: block;
+  height: 3px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 3px;
+}
+
+@media (max-width: 768px) {
+  .nav-toggle { display: flex; order: 2; margin-left: auto; z-index: 110; }
+  .scoreboard-header .nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    margin-top: 8px;
+    background: transparent;
+    padding-bottom: 8px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 300ms ease, opacity 200ms ease;
+    opacity: 0;
+  }
+  .scoreboard-header .nav-menu.open {
+    max-height: 420px;
+    opacity: 1;
+  }
+  .scoreboard-header .nav-menu .nav-button {
+    width: 100%;
+    text-align: left;
+    padding-left: 12px;
+  }
+
+  /* 'More' submenu */
+  .more-button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+  .more-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 250ms ease, opacity 180ms ease;
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-left: 8px;
+  }
+  .more-menu.open {
+    max-height: 240px;
+    opacity: 1;
+  }
+}
+
 .scoreboard-header .nav-button {
   padding: 10px 20px;
   background: transparent;
@@ -857,9 +925,14 @@
 }
 
 @media (max-width: 768px) {
+  .scoreboard-header {
+    padding: 6px 0;
+  }
   .scoreboard-header .header-content {
-    flex-direction: column;
-    gap: 15px;
+    flex-direction: row;
+    gap: 8px;
+    padding: 0 10px;
+    align-items: center;
   }
   
   .scoreboard-header .nav-menu {
@@ -895,5 +968,153 @@
   .scorecard-table th,
   .scorecard-table td {
     padding: 8px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .scoreboard-header {
+    padding: 4px 0;
+  }
+
+  .scoreboard-header .header-content {
+    padding: 0 8px;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .scoreboard-header .logo h1 {
+    font-size: 14px;
+    letter-spacing: 1px;
+    margin: 0;
+  }
+
+  .scoreboard-header .cricket-ball-small {
+    width: 24px;
+    height: 24px;
+  }
+
+  .scoreboard-header .nav-menu {
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .scoreboard-header .nav-button {
+    padding: 6px 8px;
+    font-size: 12px;
+    min-width: 0;
+    border-radius: 8px;
+  }
+
+  .scoreboard-header .nav-button.live-match {
+    gap: 6px;
+    padding: 6px 8px;
+  }
+
+  .live-dot {
+    width: 5px;
+    height: 5px;
+  }
+
+  .header-controls {
+    gap: 6px;
+  }
+
+  /* hide the auto-refresh text to save space, keep the checkbox */
+  .auto-refresh-toggle {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .auto-refresh-toggle span { display: none; }
+
+  .auto-refresh-toggle input {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* Extra compact adjustments for very small screens */
+@media (max-width: 420px) {
+  .scoreboard-header {
+    padding: 6px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  }
+
+  .scoreboard-header .header-content {
+    padding: 0 10px;
+    gap: 8px;
+    max-width: 100%;
+    margin: 0 6px;
+  }
+
+  .scoreboard-header .logo {
+    gap: 8px;
+  }
+
+  .scoreboard-header .logo h1 {
+    font-size: 15px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+  }
+
+  .scoreboard-header .cricket-ball-small {
+    width: 26px;
+    height: 26px;
+  }
+
+  /* Make nav compress and wrap tightly */
+  .scoreboard-header .nav-menu {
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-height: 160px;
+    overflow: auto;
+    padding: 4px 0;
+  }
+
+  .scoreboard-header .nav-button {
+    padding: 6px 8px;
+    font-size: 12px;
+    min-width: 0;
+    border-radius: 8px;
+    white-space: nowrap;
+  }
+
+  /* Reduce visual weight of the prominent CTA when inside header */
+  .scoreboard-header .create-match-btn,
+  .scoreboard-header .player-registration,
+  .scoreboard-header .player-register-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+    border-radius: 10px;
+    min-width: 0;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  }
+
+  /* Reduce spacing for header controls */
+  .header-controls {
+    gap: 6px;
+  }
+
+  .auto-refresh-toggle {
+    font-size: 12px;
+  }
+
+  .auto-refresh-toggle input {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Ensure the large match-selector button doesn't stretch header */
+  .match-selector-btn {
+    min-width: 120px;
+    padding: 8px 10px;
+    font-size: 13px;
   }
 }
