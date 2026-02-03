@@ -30,6 +30,12 @@
   cursor: pointer;
 }
 
+.teams-header .spl-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
 .teams-header .cricket-ball-small {
   width: 40px;
   height: 40px;
@@ -623,56 +629,110 @@
 
   .team-players-grid {
     grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
+    gap: 10px;
+  }
+
+  .team-header-card {
+    padding: 30px;
+  }
+
+  .team-logo-circle {
+    width: 100px;
+    height: 100px;
+    font-size: 50px;
+  }
+
+  .team-header-info h2 {
+    font-size: 36px;
   }
 }
 
 @media (max-width: 1024px) {
   .teams-header .nav-menu {
-    gap: 10px;
+    gap: 8px;
   }
 
   .teams-header .nav-button {
-    padding: 8px 12px;
+    padding: 8px 14px;
     font-size: 12px;
+  }
+
+  .teams-header .logo h1 {
+    font-size: 20px;
+  }
+
+  .teams-header .spl-logo {
+    width: 35px;
+    height: 35px;
+  }
+
+  .page-title {
+    font-size: 36px;
+  }
+
+  .page-subtitle {
+    font-size: 16px;
   }
 
   .team-header-content {
     flex-direction: column;
     text-align: center;
+    gap: 20px;
+  }
+
+  .team-header-info h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
   }
 
   .team-stats-row {
     justify-content: center;
     flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .stat-value {
+    font-size: 28px;
   }
 
   .team-players-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    gap: 12px;
   }
 
   .team-player-name {
-    font-size: 15px;
-    min-height: 38px;
+    font-size: 14px;
+    min-height: 36px;
+  }
+
+  .team-player-value {
+    font-size: 14px;
+    padding: 9px 10px;
   }
 
   .team-player-avatar-fallback {
-    width: 100px;
-    height: 100px;
-    font-size: 36px;
-    margin-bottom: 120px;
+    width: 90px;
+    height: 90px;
+    font-size: 34px;
+    margin-bottom: 110px;
   }
 
   .summary-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
   }
 }
 
 @media (max-width: 768px) {
+  .teams-header {
+    padding: 15px 0;
+    position: relative;
+  }
+
   .teams-header .header-content {
     flex-direction: column;
     gap: 15px;
+    padding: 0 15px;
   }
 
   .teams-header .logo {
@@ -680,8 +740,18 @@
     justify-content: center;
   }
 
+  .teams-header .logo h1 {
+    font-size: 18px;
+  }
+
+  .teams-header .spl-logo {
+    width: 30px;
+    height: 30px;
+  }
+
   .teams-header .nav-menu {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     width: 100%;
     gap: 8px;
   }
@@ -689,6 +759,12 @@
   .teams-header .nav-button {
     width: 100%;
     text-align: center;
+    padding: 10px 8px;
+    font-size: 11px;
+  }
+
+  .teams-header .register-btn {
+    grid-column: 1 / -1;
   }
 
   .teams-header .user-info {
@@ -699,10 +775,24 @@
     justify-content: center;
     padding-top: 10px;
     border-top: 2px solid rgba(255, 255, 255, 0.3);
+    grid-column: 1 / -1;
+  }
+
+  .teams-page-header {
+    padding: 40px 15px;
   }
 
   .page-title {
-    font-size: 32px;
+    font-size: 28px;
+    letter-spacing: 2px;
+  }
+
+  .page-subtitle {
+    font-size: 14px;
+  }
+
+  .teams-nav-section {
+    padding: 20px 15px;
   }
 
   .teams-nav {
@@ -710,8 +800,34 @@
     gap: 12px;
   }
 
+  .team-nav-btn {
+    padding: 18px;
+  }
+
+  .team-nav-name {
+    font-size: 18px;
+  }
+
+  .team-details-section {
+    margin: 30px auto;
+    padding: 0 15px;
+  }
+
+  .team-header-card {
+    padding: 25px 20px;
+    border-radius: 16px;
+  }
+
+  .team-logo-circle {
+    width: 80px;
+    height: 80px;
+    font-size: 40px;
+    border: 3px solid white;
+  }
+
   .team-header-info h2 {
-    font-size: 32px;
+    font-size: 26px;
+    margin-bottom: 20px;
   }
 
   .team-stats-row {
@@ -719,23 +835,42 @@
     gap: 15px;
   }
 
+  .stat-value {
+    font-size: 24px;
+  }
+
+  .stat-label {
+    font-size: 13px;
+  }
+
   .stat-divider {
-    width: 50px;
-    height: 2px;
+    display: none;
   }
 
   .team-players-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    gap: 10px;
   }
 
   .team-player-name {
-    font-size: 15px;
-    min-height: 40px;
+    font-size: 13px;
+    min-height: 34px;
+    line-height: 1.3;
   }
 
   .team-player-age {
     font-size: 10px;
+  }
+
+  .team-player-stats {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .stat-item {
+    padding: 5px 8px;
+    width: 100%;
+    justify-content: center;
   }
 
   .stat-text {
@@ -743,45 +878,180 @@
   }
 
   .team-player-value {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .team-player-avatar-fallback {
+    width: 70px;
+    height: 70px;
+    font-size: 28px;
+    margin-bottom: 90px;
+    border: 3px solid white;
+  }
+
+  .player-card-number {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+    top: -35px;
+    right: 8px;
+  }
+
+  .player-role-badge {
+    font-size: 8px;
+    padding: 4px 8px;
+    top: 8px;
+    right: 8px;
+  }
+
+  .sold-watermark {
+    width: 110%;
+  }
+
+  .no-players-section {
+    padding: 60px 20px;
+  }
+
+  .no-players-icon {
+    font-size: 80px;
+  }
+
+  .no-players-section h3 {
+    font-size: 26px;
+  }
+
+  .no-players-section p {
+    font-size: 16px;
+  }
+
+  .go-auction-btn {
+    padding: 12px 30px;
     font-size: 14px;
+  }
+
+  .summary-section {
+    padding: 40px 15px;
+    margin-top: 30px;
+  }
+
+  .summary-container h2 {
+    font-size: 28px;
+    margin-bottom: 30px;
   }
 
   .summary-grid {
     grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .summary-card {
+    padding: 20px;
+  }
+
+  .summary-card h3 {
+    font-size: 20px;
   }
 }
 
 @media (max-width: 480px) {
+  .teams-container {
+    padding-bottom: 40px;
+  }
+
+  .teams-header {
+    padding: 12px 0;
+  }
+
+  .teams-header .logo h1 {
+    font-size: 16px;
+    letter-spacing: 1px;
+  }
+
+  .teams-header .spl-logo {
+    width: 28px;
+    height: 28px;
+  }
+
+  .teams-header .nav-button {
+    padding: 8px 6px;
+    font-size: 10px;
+    border-radius: 6px;
+  }
+
+  .teams-header .username {
+    font-size: 12px;
+  }
+
+  .teams-header .logout-btn {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+
+  .teams-page-header {
+    padding: 30px 12px;
+  }
+
   .page-title {
-    font-size: 26px;
+    font-size: 22px;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
   }
 
   .page-subtitle {
-    font-size: 14px;
+    font-size: 12px;
+  }
+
+  .teams-nav-section {
+    padding: 15px 12px;
   }
 
   .team-nav-btn {
-    padding: 12px;
+    padding: 15px;
+    border-radius: 12px;
   }
 
   .team-nav-name {
     font-size: 16px;
   }
 
-  .team-header-info h2 {
-    font-size: 26px;
-  }
-
-  .stat-value {
-    font-size: 24px;
-  }
-
-  .stat-label {
+  .team-nav-count {
     font-size: 12px;
   }
 
-  .team-player-card {
-    padding: 20px;
+  .team-details-section {
+    margin: 20px auto;
+    padding: 0 12px;
+  }
+
+  .team-details-container {
+    gap: 25px;
+  }
+
+  .team-header-card {
+    padding: 20px 15px;
+    border-radius: 12px;
+  }
+
+  .team-logo-circle {
+    width: 70px;
+    height: 70px;
+    font-size: 35px;
+    border: 2px solid white;
+  }
+
+  .team-header-info h2 {
+    font-size: 22px;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+  }
+
+  .stat-value {
+    font-size: 20px;
+  }
+
+  .stat-label {
+    font-size: 11px;
   }
 
   .team-players-grid {
@@ -789,22 +1059,36 @@
     gap: 8px;
   }
 
+  .team-player-card {
+    border-radius: 8px;
+  }
+
+  .team-player-overlay {
+    padding: 50px 10px 12px 10px;
+  }
+
   .team-player-name {
-    font-size: 14px;
-    min-height: 38px;
+    font-size: 12px;
+    min-height: 32px;
+    letter-spacing: 0.5px;
   }
 
   .team-player-age {
     font-size: 9px;
+    margin-bottom: 6px;
+  }
+
+  .team-player-stats {
+    gap: 4px;
   }
 
   .stat-item {
-    padding: 5px 8px;
+    padding: 4px 6px;
     gap: 4px;
   }
 
   .stat-icon {
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .stat-text {
@@ -812,26 +1096,131 @@
   }
 
   .team-player-value {
-    font-size: 13px;
-    padding: 8px 10px;
+    font-size: 11px;
+    padding: 7px 6px;
+    border-radius: 8px;
   }
 
   .team-player-avatar-fallback {
-    width: 80px;
-    height: 80px;
-    font-size: 32px;
-    margin-bottom: 100px;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    margin-bottom: 80px;
+    border: 2px solid white;
   }
 
   .player-card-number {
-    width: 32px;
-    height: 32px;
-    font-size: 13px;
-    top: -40px;
+    width: 26px;
+    height: 26px;
+    font-size: 11px;
+    top: -30px;
+    right: 6px;
   }
 
   .player-role-badge {
+    font-size: 7px;
+    padding: 3px 6px;
+    top: 6px;
+    right: 6px;
+    border-radius: 10px;
+  }
+
+  .sold-watermark {
+    width: 115%;
+  }
+
+  .no-players-section {
+    padding: 50px 15px;
+    border-radius: 16px;
+  }
+
+  .no-players-icon {
+    font-size: 70px;
+    margin-bottom: 15px;
+  }
+
+  .no-players-section h3 {
+    font-size: 22px;
+    margin-bottom: 12px;
+  }
+
+  .no-players-section p {
+    font-size: 14px;
+    margin-bottom: 25px;
+  }
+
+  .go-auction-btn {
+    padding: 10px 25px;
+    font-size: 13px;
+    border-radius: 10px;
+  }
+
+  .summary-section {
+    padding: 30px 12px;
+    margin-top: 25px;
+  }
+
+  .summary-container h2 {
+    font-size: 24px;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
+  }
+
+  .summary-grid {
+    gap: 12px;
+  }
+
+  .summary-card {
+    padding: 18px;
+    border-radius: 12px;
+  }
+
+  .summary-card h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+
+  .summary-stats {
+    gap: 10px;
+  }
+
+  .summary-stat {
+    padding: 10px;
+  }
+
+  .summary-label {
+    font-size: 12px;
+  }
+
+  .summary-value {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 360px) {
+  .page-title {
+    font-size: 20px;
+  }
+
+  .team-header-info h2 {
+    font-size: 20px;
+  }
+
+  .stat-value {
+    font-size: 18px;
+  }
+
+  .team-player-name {
+    font-size: 11px;
+    min-height: 30px;
+  }
+
+  .team-player-value {
+    font-size: 10px;
+  }
+
+  .teams-header .nav-button {
     font-size: 9px;
-    padding: 5px 10px;
+    padding: 7px 5px;
   }
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { API_ENDPOINTS, getPlayerImageUrl } from '../config/api';
 import './Teams.css';
@@ -10,7 +10,16 @@ const Teams = () => {
   const [loading, setLoading] = useState(true);
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [imageErrors, setImageErrors] = useState({});
-  const userRole = localStorage.getItem('userRole') || 'admin';
+  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+  const userRole = localStorage.getItem('userRole');
+  const username = localStorage.getItem('username');
+  
+  // Only show admin features if explicitly logged in as admin
+  const isAdmin = isAuthenticated && userRole === 'admin';
+  // Staff dashboard mode flag via query param
+  const location = useLocation();
+  const staffMode = new URLSearchParams(location.search).get('mode') === 'staff';
+  const showAdmin = isAdmin && !staffMode;
 
   useEffect(() => {
     fetchTeams();
@@ -96,32 +105,37 @@ const Teams = () => {
       {/* Header */}
       <header className="teams-header">
         <div className="header-content">
-          <div className="logo" onClick={() => navigate(userRole === 'staff' ? '/staff-dashboard' : '/')}>
-            <div className="cricket-ball-small"></div>
-            <h1>SPL AUCTION</h1>
+          <div className="logo" onClick={() => navigate(staffMode ? '/staff-dashboard' : (isAdmin ? '/home' : '/staff-dashboard'))}>
+            <img src="/assets/spl logo.png" alt="SPL Logo" className="spl-logo" />
+            <h1>SARASA PREMIER LEAGUE</h1>
           </div>
           <nav className="nav-menu">
-            <button className="nav-button" onClick={() => navigate(userRole === 'staff' ? '/staff-dashboard' : '/')}>
-              {userRole === 'staff' ? 'Dashboard' : 'Home'}
+            <button className="nav-button" onClick={() => navigate('/staff-dashboard')}>
+              {staffMode ? 'Dashboard' : (isAdmin ? 'Home' : 'Dashboard')}
             </button>
-            <button className="nav-button" onClick={() => navigate('/view-players')}>View Players</button>
-            {userRole === 'admin' && (
+            <button className="nav-button" onClick={() => navigate(staffMode ? '/view-players?mode=staff' : '/view-players')}>View Players</button>
+            {showAdmin && (
               <>
                 <button className="nav-button" onClick={() => navigate('/auction')}>Auction</button>
               </>
             )}
             <button className="nav-button active">Teams</button>
-            {userRole === 'admin' && (
+            <button className="nav-button" onClick={() => navigate(staffMode ? '/live-scoreboard?mode=staff' : '/live-scoreboard')}>Live Scoreboard</button>
+            <button className="nav-button" onClick={() => navigate(staffMode ? '/points-table?mode=staff' : '/points-table')}>Points Table</button>
+            {showAdmin && (
               <>
+                <button className="nav-button" onClick={() => navigate('/match-setup')}>Match Setup</button>
                 <button className="nav-button" onClick={() => navigate('/reports')}>Reports</button>
                 <button className="nav-button" onClick={() => navigate('/admin')}>Admin</button>
-                <button className="nav-button" onClick={() => navigate('/register-player')}>Register Player</button>
+                <button className="nav-button register-btn" onClick={() => navigate('/register-player')}>Register Player</button>
               </>
             )}
-            <div className="user-info">
-              <span className="username">{localStorage.getItem('username')}</span>
-              <button className="logout-btn" onClick={handleLogout}>Logout</button>
-            </div>
+            {isAuthenticated && (
+              <div className="user-info">
+                <span className="username">{username}</span>
+                <button className="logout-btn" onClick={handleLogout}>Logout</button>
+              </div>
+            )}
           </nav>
         </div>
       </header>

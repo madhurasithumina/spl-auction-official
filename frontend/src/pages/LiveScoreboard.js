@@ -16,9 +16,15 @@ const LiveScoreboard = () => {
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState('scorecard'); // scorecard, batsmen, bowlers
   const [autoRefresh, setAutoRefresh] = useState(true);
-  const [navOpen, setNavOpen] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
-  const [incompleteMatches, setIncompleteMatches] = useState([]);
+  
+  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+  const userRole = localStorage.getItem('userRole');
+  const username = localStorage.getItem('username');
+  
+  // Only show admin features if explicitly logged in as admin
+  const isAdmin = isAuthenticated && userRole === 'admin';
+  const staffMode = searchParams.get('mode') === 'staff';
+  const showAdmin = isAdmin && !staffMode;
 
   const fetchMatchDetails = useCallback(async (matchId) => {
     try {
@@ -33,10 +39,6 @@ const LiveScoreboard = () => {
     try {
       const response = await axios.get(`${API_BASE}/matches/index.php`);
       setMatches(response.data);
-      
-      // Track incomplete matches
-      const incomplete = response.data.filter(m => m.status === 'live' || m.status === 'innings_break');
-      setIncompleteMatches(incomplete);
       
       // Auto-select live match or match from URL
       if (matchIdParam) {
@@ -120,6 +122,13 @@ const LiveScoreboard = () => {
     return ball.runs_scored;
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('username');
+    navigate('/login');
+  };
+
   if (loading) {
     return (
       <div className="live-scoreboard-container">
@@ -143,40 +152,39 @@ const LiveScoreboard = () => {
       {/* Header */}
       <header className="scoreboard-header">
         <div className="header-content">
-          <div className="logo" onClick={() => navigate('/')}>
-            <div className="cricket-ball-small"></div>
-            <h1>SPL LIVE</h1>
+          <div className="logo" onClick={() => navigate(staffMode ? '/staff-dashboard' : (isAdmin ? '/home' : '/staff-dashboard'))}>
+            <img src="/assets/spl logo.png" alt="SPL Logo" className="spl-logo" />
+            <h1>SARASA PREMIER LEAGUE</h1>
           </div>
-          <button
-            className={`nav-toggle ${navOpen ? 'open' : ''}`}
-            aria-expanded={navOpen}
-            aria-label="Toggle navigation"
-            onClick={() => setNavOpen(!navOpen)}
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
-
-          <nav className={`nav-menu ${navOpen ? 'open' : ''}`}>
-            <div className="nav-primary">
-              <button className="nav-button" onClick={() => { navigate('/'); setNavOpen(false); setMoreOpen(false); }}>Home</button>
-              <button className="nav-button active" onClick={() => { setNavOpen(false); setMoreOpen(false); }}>Live Scores</button>
-            </div>
-
-            <button className="more-button nav-button" onClick={() => setMoreOpen(!moreOpen)} aria-expanded={moreOpen}>
-              More ▾
+          <nav className="nav-menu">
+            <button className="nav-button" onClick={() => navigate('/staff-dashboard')}>
+              {staffMode ? 'Dashboard' : (isAdmin ? 'Home' : 'Dashboard')}
             </button>
-
-            <div className={`more-menu ${moreOpen ? 'open' : ''}`}>
-              <button className="nav-button" onClick={() => { navigate('/match-setup'); setNavOpen(false); setMoreOpen(false); }}>New Match</button>
-              {incompleteMatches.length > 0 && (
-                <button className="nav-button live-match" onClick={() => { navigate(`/scoring/${incompleteMatches[0].id}`); setNavOpen(false); setMoreOpen(false); }}>
-                  <span className="live-dot"></span>
-                  {incompleteMatches[0].status === 'innings_break' ? 'Start 2nd Innings' : 'Continue Scoring'}
+            <button className="nav-button" onClick={() => navigate(staffMode ? '/view-players?mode=staff' : '/view-players')}>View Players</button>
+            {showAdmin && (
+              <>
+                <button className="nav-button" onClick={() => navigate('/auction')}>Auction</button>
+              </>
+            )}
+            <button className="nav-button" onClick={() => navigate(staffMode ? '/teams?mode=staff' : '/teams')}>Teams</button>
+            <button className="nav-button active">Live Scoreboard</button>
+            <button className="nav-button" onClick={() => navigate(staffMode ? '/points-table?mode=staff' : '/points-table')}>Points Table</button>
+            {showAdmin && (
+              <>
+                <button className="nav-button" onClick={() => navigate('/match-setup')}>Match Setup</button>
+                <button className="nav-button" onClick={() => navigate('/reports')}>Reports</button>
+                <button className="nav-button" onClick={() => navigate('/admin')}>Admin</button>
+                <button className="nav-button register-btn" onClick={() => navigate('/register-player')}>
+                  Register Player
                 </button>
-              )}
-            </div>
+              </>
+            )}
+            {isAuthenticated && (
+              <div className="user-info">
+                <span className="username">{username}</span>
+                <button className="logout-btn" onClick={handleLogout}>Logout</button>
+              </div>
+            )}
           </nav>
           <div className="header-controls">
             <label className="auto-refresh-toggle">

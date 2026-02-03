@@ -12,14 +12,11 @@ import Admin from './pages/Admin';
 import MatchSetup from './pages/MatchSetup';
 import Scoring from './pages/Scoring';
 import LiveScoreboard from './pages/LiveScoreboard';
+import PointsTable from './pages/PointsTable';
+import Tournament from './pages/Tournament';
 import './App.css';
 
 function App() {
-  const PrivateRoute = ({ children }) => {
-    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
-    return isAuthenticated ? children : <Navigate to="/login" />;
-  };
-
   const AdminRoute = ({ children }) => {
     const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
     const userRole = localStorage.getItem('userRole');
@@ -32,21 +29,20 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
+          {/* Public route - Staff Dashboard is the default landing page */}
+          <Route path="/" element={<StaffDashboard />} />
+          <Route path="/staff-dashboard" element={<StaffDashboard />} />
+          
+          {/* Admin Login - accessible via keyboard shortcut "1234" from Staff Dashboard */}
           <Route path="/login" element={<Login />} />
+          
+          {/* Admin-only routes */}
           <Route 
-            path="/" 
+            path="/home" 
             element={
               <AdminRoute>
                 <Home />
               </AdminRoute>
-            } 
-          />
-          <Route 
-            path="/staff-dashboard" 
-            element={
-              <PrivateRoute>
-                <StaffDashboard />
-              </PrivateRoute>
             } 
           />
           <Route 
@@ -58,27 +54,11 @@ function App() {
             } 
           />
           <Route 
-            path="/view-players" 
-            element={
-              <PrivateRoute>
-                <ViewPlayers />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
             path="/auction" 
             element={
               <AdminRoute>
                 <Auction />
               </AdminRoute>
-            } 
-          />
-          <Route 
-            path="/teams" 
-            element={
-              <PrivateRoute>
-                <Teams />
-              </PrivateRoute>
             } 
           />
           <Route 
@@ -113,14 +93,13 @@ function App() {
               </AdminRoute>
             } 
           />
-          <Route 
-            path="/live-scoreboard" 
-            element={
-              <PrivateRoute>
-                <LiveScoreboard />
-              </PrivateRoute>
-            } 
-          />
+          
+          {/* Public routes - accessible to everyone */}
+          <Route path="/view-players" element={<ViewPlayers />} />
+          <Route path="/teams" element={<Teams />} />
+          <Route path="/live-scoreboard" element={<LiveScoreboard />} />
+          <Route path="/points-table" element={<PointsTable />} />
+          <Route path="/tournament" element={<Tournament />} />
         </Routes>
       </div>
     </Router>

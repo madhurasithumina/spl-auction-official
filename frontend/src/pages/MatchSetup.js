@@ -233,7 +233,7 @@ const MatchSetup = () => {
       <header className="match-setup-header">
         <div className="header-content">
           <div className="logo" onClick={() => navigate(userRole === 'staff' ? '/staff-dashboard' : '/')}>
-            <div className="cricket-ball-small"></div>
+            <img src="/assets/spl logo.png" alt="SPL Logo" className="spl-logo" />
             <h1>SPL LIVE</h1>
           </div>
           <nav className="nav-menu">

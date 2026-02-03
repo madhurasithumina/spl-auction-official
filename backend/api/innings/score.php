@@ -222,8 +222,8 @@ try {
         $newStrikerId = $batsmanId;
         $newNonStrikerId = $nonStrikerId;
         
-        // Rotate strike on odd runs (including extras on wide/no-ball)
-        $totalRunsForStrike = $totalRuns;
+        // Rotate strike on odd runs (exclude penalty runs which do not change strike)
+        $totalRunsForStrike = $totalRuns - ($isPenalty ? $penaltyRuns : 0);
         if ($totalRunsForStrike % 2 === 1) {
             $newStrikerId = $nonStrikerId;
             $newNonStrikerId = $batsmanId;
@@ -280,14 +280,14 @@ try {
                 extras_penalty = extras_penalty + ?
             WHERE id = ?
         ");
-        $stmt->execute([
+            $stmt->execute([
             $totalRuns,
             $isWicket ? 1 : 0,
             $isLegalBall ? 1 : 0,
             $isLegalBall ? 1 : 0,
             $isLegalBall ? 1 : 0,
             $isWide ? $extraRuns : 0,
-            $isNoball ? 1 + ($isNoball && !$isBye && !$isLegbye ? $runsScored : 0) : 0,
+            $isNoball ? 1 : 0,
             $isBye ? $runsScored : 0,
             $isLegbye ? $runsScored : 0,
             $isPenalty ? $penaltyRuns : 0,
@@ -380,14 +380,54 @@ try {
         }
         
         // Complete match if needed
-        if ($matchCompleted) {
-            $stmt = $db->prepare("UPDATE matches SET status = 'completed', winner_id = ?, win_margin = ? WHERE id = ?");
-            $stmt->execute([$winnerId, $winMargin, $matchId]);
-            
-            // Mark all innings as completed
-            $stmt = $db->prepare("UPDATE innings SET status = 'completed' WHERE match_id = ?");
-            $stmt->execute([$matchId]);
-        }
+            if ($matchCompleted) {
+                $stmt = $db->prepare("UPDATE matches SET status = 'completed', winner_id = ?, win_margin = ? WHERE id = ?");
+                $stmt->execute([$winnerId, $winMargin, $matchId]);
+
+                // For playoff matches, update playoff bracket progression automatically
+                try {
+                    $stageStmt = $db->prepare("SELECT tournament_id, stage FROM match_stages WHERE match_id = ?");
+                    $stageStmt->execute([$matchId]);
+                    $stageRow = $stageStmt->fetch();
+                    if ($stageRow && !empty($stageRow['stage'])) {
+                        require_once __DIR__ . '/../tournament/playoffs.php';
+                        $playoffController = new PlayoffController($db);
+                        switch ($stageRow['stage']) {
+                            case 'qualifier_1':
+                                $playoffController->updateQualifier1Result($stageRow['tournament_id'], $matchId, $winnerId);
+                                break;
+                            case 'eliminator':
+                                $playoffController->updateEliminatorResult($stageRow['tournament_id'], $matchId, $winnerId);
+                                break;
+                            case 'qualifier_2':
+                                $playoffController->updateQualifier2Result($stageRow['tournament_id'], $matchId, $winnerId);
+                                break;
+                            case 'final':
+                                $playoffController->updateFinalResult($stageRow['tournament_id'], $matchId, $winnerId);
+                                break;
+                        }
+                    }
+                } catch (Exception $e) {
+                    // Ignore playoff update errors here to avoid breaking scoring flow
+                }
+                
+                // Update points table for league/group stage matches automatically
+                try {
+                    require_once __DIR__ . '/../tournament/points.php';
+                    $tournamentController = new TournamentController($db);
+                    $pointsResult = $tournamentController->updatePointsTable($matchId);
+                    if (!$pointsResult['success']) {
+                        error_log("Points table update failed: " . $pointsResult['message']);
+                    }
+                } catch (Exception $e) {
+                    // Log but don't break scoring flow if points update fails
+                    error_log("Points table update error: " . $e->getMessage());
+                }
+                
+                // Mark all innings as completed
+                $stmt = $db->prepare("UPDATE innings SET status = 'completed' WHERE match_id = ?");
+                $stmt->execute([$matchId]);
+            }
         
         echo json_encode([
             'success' => true,

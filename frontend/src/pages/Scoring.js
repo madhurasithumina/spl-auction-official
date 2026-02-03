@@ -52,13 +52,28 @@ const Scoring = () => {
       const currentInn = response.data.innings?.find(i => i.status === 'in_progress');
       setCurrentInnings(currentInn || null);
       
-      // Check if we need to start innings (no striker selected or no batsmen at crease)
-      if (response.data.status === 'live' && currentInn && !response.data.state?.striker_id) {
+      // Priority 1: Start innings only when it's the very beginning (no balls bowled, no batsmen at crease)
+      const shouldStartInnings = (
+        response.data.status === 'live' &&
+        !!currentInn &&
+        (currentInn.total_balls === 0) &&
+        !response.data.state?.striker_id &&
+        !response.data.state?.non_striker_id
+      );
+
+      if (shouldStartInnings) {
         setShowStartInningsModal(true);
-        setShowNewBowlerModal(false); // Close new bowler modal if start innings is needed
-      } else if (response.data.state?.need_new_bowler && response.data.state?.striker_id) {
-        // Only show new bowler modal if innings has already started (striker exists)
+        setShowNewBowlerModal(false); // Close new bowler modal - we need full innings setup
+      } 
+      // Priority 2: Only show new bowler modal if innings has already started (striker exists)
+      else if (response.data.status === 'live' && response.data.state?.need_new_bowler && response.data.state?.striker_id) {
         setShowNewBowlerModal(true);
+        setShowStartInningsModal(false);
+      }
+      // Priority 3: Close modals if not needed
+      else {
+        setShowNewBowlerModal(false);
+        setShowStartInningsModal(false);
       }
       
       setLoading(false);
@@ -218,12 +233,14 @@ const Scoring = () => {
 
   const selectNewBatsman = async (playerId) => {
     try {
+      // Decide which end needs a replacement based on current match state
+      const replaceStriker = !matchState?.striker_id;
       await axios.post(`${API_BASE}/matches/live.php`, {
         action: 'set_batsman',
         match_id: matchId,
         innings_id: currentInnings.id,
         player_id: playerId,
-        is_striker: true
+        is_striker: replaceStriker
       });
       setShowNewBatsmanModal(false);
       fetchMatchData();
@@ -391,7 +408,7 @@ const Scoring = () => {
       <header className="scoring-header">
         <div className="header-content">
           <div className="logo" onClick={() => navigate('/')}>
-            <div className="cricket-ball-small"></div>
+            <img src="/assets/spl logo.png" alt="SPL Logo" className="spl-logo" />
             <h1>SPL SCORER</h1>
           </div>
           <div className="match-info-header">

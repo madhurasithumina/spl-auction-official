@@ -98,8 +98,8 @@ const Admin = () => {
       <header className="admin-header">
         <div className="header-content">
           <div className="logo" onClick={() => navigate('/')}>
-            <div className="cricket-ball-small"></div>
-            <h1>SPL AUCTION</h1>
+            <img src="/assets/spl logo.png" alt="SPL Logo" className="spl-logo" />
+            <h1>SARASA PREMIER LEAGUE</h1>
           </div>
           <nav className="nav-menu">
             <button className="nav-button" onClick={() => navigate('/')}>Home</button>

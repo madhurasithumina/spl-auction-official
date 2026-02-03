@@ -241,7 +241,46 @@ try {
                         $stmt = $db->prepare("UPDATE innings SET status = 'completed' WHERE match_id = ?");
                         $stmt->execute([$matchId]);
                         
-                        echo json_encode(['success' => true, 'message' => 'Match completed']);
+                        // Automatically update points table after match completion
+                        require_once __DIR__ . '/../tournament/points.php';
+                        $database = Database::getInstance();
+                        $tournamentDb = $database->getConnection();
+                        $tournamentController = new TournamentController($tournamentDb);
+                        $pointsResult = $tournamentController->updatePointsTable($matchId);
+
+                        // If this is a playoff match, update the playoff bracket progression
+                        try {
+                            $stageStmt = $db->prepare("SELECT tournament_id, stage FROM match_stages WHERE match_id = ?");
+                            $stageStmt->execute([$matchId]);
+                            $stageRow = $stageStmt->fetch();
+                            if ($stageRow && !empty($stageRow['stage'])) {
+                                require_once __DIR__ . '/../tournament/playoffs.php';
+                                $playoffController = new PlayoffController($db);
+                                switch ($stageRow['stage']) {
+                                    case 'qualifier_1':
+                                        $playoffController->updateQualifier1Result($stageRow['tournament_id'], $matchId, $data['winner_id']);
+                                        break;
+                                    case 'eliminator':
+                                        $playoffController->updateEliminatorResult($stageRow['tournament_id'], $matchId, $data['winner_id']);
+                                        break;
+                                    case 'qualifier_2':
+                                        $playoffController->updateQualifier2Result($stageRow['tournament_id'], $matchId, $data['winner_id']);
+                                        break;
+                                    case 'final':
+                                        $playoffController->updateFinalResult($stageRow['tournament_id'], $matchId, $data['winner_id']);
+                                        break;
+                                }
+                            }
+                        } catch (Exception $e) {
+                            // Non-fatal: include note in response
+                            $pointsResult['playoff_update_error'] = $e->getMessage();
+                        }
+                        
+                        echo json_encode([
+                            'success' => true, 
+                            'message' => 'Match completed',
+                            'points_update' => $pointsResult
+                        ]);
                         break;
                         
                     default:

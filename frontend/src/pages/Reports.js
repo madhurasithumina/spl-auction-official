@@ -64,7 +64,7 @@ const Reports = () => {
     // Add title
     doc.setFontSize(20);
     doc.setFont('helvetica', 'bold');
-    doc.text('SPL Cricket Auction Report', 105, 20, { align: 'center' });
+    doc.text('SARASA PREMIER LEAGUE Report', 105, 20, { align: 'center' });
     
     // Add subtitle
     doc.setFontSize(12);
@@ -139,7 +139,7 @@ const Reports = () => {
       doc.setPage(i);
       doc.setFontSize(8);
       doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 10, { align: 'center' });
-      doc.text('SPL Cricket Auction System', 14, doc.internal.pageSize.height - 10);
+      doc.text('SARASA PREMIER LEAGUE', 14, doc.internal.pageSize.height - 10);
     }
 
     // Save PDF
@@ -269,8 +269,8 @@ const Reports = () => {
       <header className="reports-header">
         <div className="header-content">
           <div className="logo" onClick={() => navigate('/')}>
-            <div className="cricket-ball-small"></div>
-            <h1>SPL AUCTION</h1>
+            <img src="/assets/spl logo.png" alt="SPL Logo" className="spl-logo" />
+            <h1>SARASA PREMIER LEAGUE</h1>
           </div>
           <nav className="nav-menu">
             <button className="nav-button" onClick={() => navigate('/')}>Home</button>

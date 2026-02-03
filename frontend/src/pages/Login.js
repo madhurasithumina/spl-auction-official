@@ -11,12 +11,12 @@ const Login = () => {
   const handleLogin = (e) => {
     e.preventDefault();
     
-    // Hardcoded credentials
+    // Admin credentials
     if (username === 'Sarasa' && password === 'Dev@Soft') {
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('username', username);
       localStorage.setItem('userRole', 'admin');
-      navigate('/');
+      navigate('/home'); // Redirect to admin home page
     } else if (username === 'staff' && password === 'tstc123') {
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('username', username);
@@ -36,7 +36,7 @@ const Login = () => {
         <div className="login-header">
           <div className="logo-container">
             <div className="cricket-ball"></div>
-            <h1>SPL AUCTION</h1>
+            <h1>SARASA PREMIER LEAGUE</h1>
           </div>
           <p className="subtitle">Premier League Cricket Tournament</p>
         </div>

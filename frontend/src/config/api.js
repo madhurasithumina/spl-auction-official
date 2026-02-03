@@ -2,10 +2,10 @@
 // Change this URL to switch between local and production environments
 
 // Local development
-export const API_BASE_URL = 'http://localhost:8081';
+// export const API_BASE_URL = 'http://localhost:8081';
 
 // Production
-// export const API_BASE_URL = 'https://spl.sarasagroup.lk';
+export const API_BASE_URL = 'https://spl.sarasagroup.lk';
 
 // API endpoints
 export const API_ENDPOINTS = {

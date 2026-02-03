@@ -169,3 +169,56 @@ This project is created for internal company use.
 ## Support
 
 For any issues or questions, please contact the development team.
+
+---
+
+## Scoring – Wicket Workflow (Scoreboard Procedure)
+
+This guide explains how to correctly mark wickets during live scoring and what the system does behind the scenes.
+
+### Prerequisites
+- Match is started and in `live` status.
+- Opening batsmen and current bowler are selected (Start Innings modal).
+
+### Record a Wicket
+1. If the ball has extras, set them first:
+   - Toggle Wide, No Ball, Bye, Leg Bye, Penalty as needed.
+2. Click the `🎯 WICKET` button to open the Wicket modal.
+3. Choose the dismissal type: `BOWLED`, `CAUGHT`, `LBW`, `RUN OUT`, `STUMPED`, or `HIT WICKET`.
+4. If `RUN OUT`, select who is out: `Striker` or `Non‑Striker`.
+5. If `CAUGHT`, `RUN OUT`, or `STUMPED`, select the fielder from the bowling team XI.
+6. Click `Confirm Wicket`.
+7. Click `✓ Confirm Ball` to submit the ball.
+
+### After You Confirm
+- The batter’s scorecard is updated to `out` with the dismissal details.
+- Fall‑of‑Wicket is recorded with runs/over at the time of dismissal.
+- Current partnership is ended; a new one starts when the next batter arrives.
+- Strike rotation respects cricket rules:
+  - Odd total runs on the ball swap strike.
+  - Penalty runs do not affect strike.
+  - Over completion swaps ends.
+- If the dismissal vacates an end, the system raises `need_new_batsman` and shows the New Batsman modal.
+
+### Select the Next Batsman
+1. When prompted, choose a player from the `yet_to_bat` list.
+2. The system automatically fills the correct end:
+   - If the striker was out, the new batter is set as `striker`.
+   - If the non‑striker was run out, the new batter is set as `non‑striker`.
+
+### New Bowler (End of Over)
+- When six legal balls complete an over, you’ll see `Select Next Bowler`.
+- The previous bowler cannot bowl consecutive overs.
+
+### Undo Last Ball
+- Use `↩ Undo` to revert the previous delivery. It reverses batsman/bowler/innings totals and removes the ball.
+
+### Notes & Constraints
+- On a `No Ball`, dismissals like `bowled/caught/lbw` are not valid under standard rules; prefer `run out` (and stumped only on a wide). Use the modal accordingly.
+- Wides/No Balls add extras; byes/leg byes are tracked separately.
+- The Live Scoreboard “This Over” shows `W` for wickets and uses `Wd/Nb` notation for wides/no‑balls.
+
+### Technical Reference (for maintainers)
+- Frontend: scoring UI in [frontend/src/pages/Scoring.js](frontend/src/pages/Scoring.js).
+- Backend: ball processing in [backend/api/innings/score.php](backend/api/innings/score.php).
+- Next batsman selection: `set_batsman` via [backend/api/matches/live.php](backend/api/matches/live.php).

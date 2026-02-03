@@ -4,7 +4,8 @@ import './Home.css';
 
 const SponsorCarousel = () => {
   const slides = [
-    { type: 'video', src: '/assets/sriyani.mp4', alt: 'Sriyani Dresspoint' }
+    { type: 'video', src: '/assets/sriyani.mp4', alt: 'Sriyani Dresspoint' },
+    { type: 'video', src: '/assets/piyara-video.mp4', alt: 'Piyara Fashion' }
   ];
 
   const [index, setIndex] = useState(0);
@@ -23,7 +24,6 @@ const SponsorCarousel = () => {
 
   useEffect(() => {
     // when slide changes, ensure the active video plays from start
-    const el = slideRefs.current[index];
     slideRefs.current.forEach((v, i) => {
       if (!v) return;
       try {
@@ -128,8 +128,8 @@ const Home = () => {
       <header className="header">
         <div className="header-content">
           <div className="logo">
-            <div className="cricket-ball-small"></div>
-            <h1>SPL AUCTION</h1>
+            <img src="/assets/spl logo.png" alt="SPL Logo" className="spl-logo" />
+            <h1>SARASA PREMIER LEAGUE</h1>
           </div>
           <nav className="nav-menu">
             <button className="nav-button" onClick={() => navigate('/')}>Home</button>
@@ -138,6 +138,8 @@ const Home = () => {
             <button className="nav-button" onClick={() => navigate('/teams')}>Teams</button>
             <button className="nav-button" onClick={() => navigate('/match-setup')}>Match Setup</button>
             <button className="nav-button" onClick={() => navigate('/live-scoreboard')}>Live Score</button>
+            <button className="nav-button" onClick={() => navigate('/points-table')}>📊 Points Table</button>
+            <button className="nav-button" onClick={() => navigate('/tournament')}>🏆 Tournament</button>
             <button className="nav-button" onClick={() => navigate('/reports')}>Reports</button>
             <button className="nav-button" onClick={() => navigate('/admin')}>Admin</button>
             <button className="nav-button register-btn" onClick={handleRegisterPlayer}>
@@ -190,9 +192,9 @@ const Home = () => {
 
       {/* Footer */}
       <footer className="footer">
-        <SponsorsMarquee names={["Sriyani Dress Point", "Nolimit", "Karunarathne Stores"]} />
+        <SponsorsMarquee names={["Sriyani Dress Point", "Piyara Fashion", "Nolimit", "Karunarathne Stores"]} />
         <div className="footer-content">
-          <p>&copy; 2026 SPL Cricket Auction. All rights reserved.</p>
+          <p>&copy; 2026 SARASA PREMIER LEAGUE. All rights reserved.</p>
           <p>Powered by MERN Stack</p>
         </div>
       </footer>
